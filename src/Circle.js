@@ -13,12 +13,13 @@ class Circle extends React.Component {
       dragging: false,
       offset: {}
     };
-
-    this.setColor = this.setColor.bind(this);
   }
 
   setColor(color) {
-    this.setState({color: color});
+    // TODO: Be able to change the color from outside
+    this.setState({
+      color: color
+    });
   }
 
   handlePointerDown(e) {
@@ -73,10 +74,10 @@ class Circle extends React.Component {
           fill="black"
           x={this.state.x} 
           y={this.state.y} 
-          font-size={14} 
-          text-anchor="middle"
-          alignment-baseline="central"
-          font-family="Helvetica Neue" >
+          fontSize={14} 
+          textAnchor="middle"
+          alignmentBaseline="central"
+          fontFamily="Helvetica Neue" >
             {this.state.text}
         </text>
       </g>

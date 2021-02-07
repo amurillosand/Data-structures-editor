@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 
 import Canvas from "./Canvas";
-import { isNumeric, isColor, divideByTokens } from "./Stuff";
-import { getNode, getEdge } from "./Graph";
+import { getRandom, isColor, divideByTokens } from "./Stuff";
 import "./styles.css"
 import "./button.css"
+
+const defaultColorNode = '#c9a9ff'
 
 class App extends Component {
   constructor() {
@@ -13,8 +14,8 @@ class App extends Component {
     this.state = {
       nodes: [],
       edges: [],
-      nodePos: new Map(),
-      edgePos: new Map(),
+      nodesColor: new Map(),
+      edgesSet: new Set(),
       drawTrie: false,
       drawGraph: true,
     }
@@ -26,48 +27,29 @@ class App extends Component {
         return divideByTokens(line);
       });
 
-      console.log(objects);
+      var nodesColor = new Map();
+      var edgesSet = new Set()
 
-      // 
-
-      var nodes = [];
-      var nodePos = new Map();
-      var edges = [];
-      var edgePos = new Map();
-
-      // Things in common with the previous version.
-
-      function addNode(u, color) {
-        if (nodePos.has(u)) {
-          console.log(nodes[nodePos[u]]);
-          nodes[nodePos[u]].setColor(color); // update the color
-        } else {
-          nodePos.set(u, nodes.length);
-          nodes.push(getNode(u, color)) // add the node to the map
-        }
-      }
-
-      function eraseNode(u) {
-        if (nodePos.has(u)) {
-          // the node exists, so we can erase it
-          nodes.splice(nodePos[u], 1);
-          nodePos.delete(u);
-        }
+      function addNode(u, color = defaultColorNode) {
+        nodesColor.set(u, color); // update color or set it for first time 
       }
 
       function addEdge(u, v, weight) {
-     
-
-
+        if (!nodesColor.has(u))
+          addNode(u);
+        if (!nodesColor.has(v))
+          addNode(v);
+        edgesSet.add({u, v, weight});
       }
 
       /*
         u
         u color
         u v
-        u v w
+        u v weight
       */
-
+      
+      // Add all the current objects
       for (let object of objects) {
         if (object.length == 0) 
           continue;
@@ -75,7 +57,7 @@ class App extends Component {
         if (object.length == 1) {
           const u = object[0];
           // Single node
-          addNode(u, '#c9a9ff');
+          addNode(u);
         } else if (object.length == 2) {
           const u = object[0];
           const x = object[1];
@@ -95,12 +77,42 @@ class App extends Component {
           addEdge(u, v, weight);
         }
       }
-    
-      return {
-        nodes: nodes,
-        nodePos: nodePos,
+
+      console.log(nodesColor);
+      console.log(edgesSet);
+
+      // Calculate things in common (get current objects from previous objects)
+      var nodes = []
+      for (var [u, color] of nodesColor) {
+        if (prev.nodesColor.has(u)) {
+          // node in common with the previous version
+          var pos = prev.nodes.map((node) => {
+            return node.text;
+          }).indexOf(u);
+
+          prev.nodes[pos].color = color;
+          nodes.push(prev.nodes[pos]);
+        } else {
+          // create a completely new node
+          const x = getRandom(0, 400);
+          const y = getRandom(0, 400);
+          nodes.push({x, y, r: 25, color, text: u});
+        }
       }
-    })
+
+      var edges = [];
+      // for (var [u, v, weight] of edgesSet) {
+
+
+      // 
+      
+      return {
+        nodesColor: nodesColor,
+        edgesSet: edgesSet,
+        nodes: nodes,
+        edges: edges,
+      }
+    });
   }
 
   drawGraphButton(e) {
@@ -140,7 +152,9 @@ class App extends Component {
             >
           </textarea>
 
-          <Canvas nodes={this.state.nodes} />
+          <Canvas 
+            nodes={this.state.nodes} 
+            edges={this.state.edges} />
         </div>
       </div>
     );

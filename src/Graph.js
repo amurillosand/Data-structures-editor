@@ -1,14 +1,11 @@
 import React, { Component } from "react"
 import Circle from "./Circle";
 
-function getRandom(min, max) {
-  return Math.random() * (max - min) + min;
-}
-
-export function getNode(u, color) {
-  const x = getRandom(0, 400)
-  const y = getRandom(0, 400)
-  return <Circle x={x} y={y} r={25} color={color} text={u} />;
+export function getNode(node) {
+  return <Circle 
+            x={node.x} y={node.y} r={node.r} 
+            color={node.color} 
+            text={node.text} />;
 }
 
 export function getEdge(u, v) {
