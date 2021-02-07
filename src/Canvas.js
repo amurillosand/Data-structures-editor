@@ -11,9 +11,9 @@ class Canvas extends Component {
     console.log("Nodes", this.props.nodes);
     console.log("Edges", this.props.edges);
     
-    // const edges = this.props.nodes.map((edge) => {
-    //   return getEdge(edge.u, edge.v);
-    // });
+    const edges = this.props.edges.map((edge) => {
+      return getEdge(edge.u, edge.v);
+    });
 
     const nodes = this.props.nodes.map((node) => {
       return getNode(node);
@@ -26,7 +26,7 @@ class Canvas extends Component {
       //   <Circle x={130} y={130} r={25} color={'red'} text={2} />
       // </svg>
       <svg className="image">
-        {/* {edges} */}
+        {edges}
         {nodes}
       </svg>
     );

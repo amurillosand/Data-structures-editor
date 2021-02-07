@@ -7,19 +7,9 @@ class Circle extends React.Component {
     this.state = {
       x: props.x,
       y: props.y,
-      r: props.r,
-      text: props.text,
-      color: props.color,
       dragging: false,
       offset: {}
     };
-  }
-
-  setColor(color) {
-    // TODO: Be able to change the color from outside
-    this.setState({
-      color: color
-    });
   }
 
   handlePointerDown(e) {
@@ -58,16 +48,19 @@ class Circle extends React.Component {
   }
 
   render() {
+    // TODO: try to change the color of the letters according to the color
+    // lightColor -> darkFont, and viceversa
+
     return (
       <g>
         <circle
           cx={this.state.x}
           cy={this.state.y}
-          r={this.state.r}
+          r={this.props.r}
           onPointerDown={this.handlePointerDown.bind(this)}
           onPointerUp={this.handlePointerUp.bind(this)}
           onPointerMove={this.handlePointerMove.bind(this)}
-          fill={this.state.color}
+          fill={this.props.color}
           stroke="black" />
 
         <text  
@@ -78,7 +71,7 @@ class Circle extends React.Component {
           textAnchor="middle"
           alignmentBaseline="central"
           fontFamily="Helvetica Neue" >
-            {this.state.text}
+            {this.props.text}
         </text>
       </g>
     );

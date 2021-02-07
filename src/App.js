@@ -35,6 +35,7 @@ class App extends Component {
       }
 
       function addEdge(u, v, weight) {
+        // Adds the edges to a set to use them later
         if (!nodesColor.has(u))
           addNode(u);
         if (!nodesColor.has(v))
@@ -81,17 +82,23 @@ class App extends Component {
       console.log(nodesColor);
       console.log(edgesSet);
 
+      function findNode(nodes, u) {
+        // Finds the node 'u' in the current 'nodes' array
+        var pos = nodes.map((node) => {
+          return node.text;
+        }).indexOf(u);
+
+        return nodes[pos];
+      }
+
       // Calculate things in common (get current objects from previous objects)
       var nodes = []
       for (var [u, color] of nodesColor) {
         if (prev.nodesColor.has(u)) {
           // node in common with the previous version
-          var pos = prev.nodes.map((node) => {
-            return node.text;
-          }).indexOf(u);
-
-          prev.nodes[pos].color = color;
-          nodes.push(prev.nodes[pos]);
+          var node = findNode(prev.nodes, u);
+          node.color = color;
+          nodes.push(node);
         } else {
           // create a completely new node
           const x = getRandom(0, 400);
@@ -101,11 +108,18 @@ class App extends Component {
       }
 
       var edges = [];
-      // for (var [u, v, weight] of edgesSet) {
+      for (var edge of edgesSet) {
+        if (prev.edgesSet.has(edge)) {
+          // edge in common with the previous version
+          var pos = prev.edges.indexOf(edge);
+          edges.push(prev.edge[pos]);
+        } else {
+          // create a new node
+          const u = findNode
 
+        }
+      }
 
-      // 
-      
       return {
         nodesColor: nodesColor,
         edgesSet: edgesSet,
