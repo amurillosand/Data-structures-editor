@@ -13,7 +13,6 @@ class App extends Component {
 
     this.state = {
       nodes: [],
-      edges: [],
       nodesColor: new Map(),
       edgesSet: new Set(),
       drawTrie: false,
@@ -30,17 +29,17 @@ class App extends Component {
       var nodesColor = new Map();
       var edgesSet = new Set()
 
-      function addNode(u, color = defaultColorNode) {
-        nodesColor.set(u, color); // update color or set it for first time 
+      function addNode(node, color = defaultColorNode) {
+        nodesColor.set(node, color); // update color or set it for first time 
       }
 
-      function addEdge(u, v, weight) {
+      function addEdge(from, to, weight) {
         // Adds the edges to a set to use them later
-        if (!nodesColor.has(u))
-          addNode(u);
-        if (!nodesColor.has(v))
-          addNode(v);
-        edgesSet.add({u, v, weight});
+        if (!nodesColor.has(from))
+          addNode(from);
+        if (!nodesColor.has(to))
+          addNode(to);
+        edgesSet.add({ from, to, weight });
       }
 
       /*
@@ -49,10 +48,10 @@ class App extends Component {
         u v
         u v weight
       */
-      
+
       // Add all the current objects
-      for (let object of objects) {
-        if (object.length == 0) 
+      for (var object of objects) {
+        if (object.length == 0)
           continue;
 
         if (object.length == 1) {
@@ -66,10 +65,10 @@ class App extends Component {
             // Node with color x
             addNode(u, x);
           } else {
-            // Edge u -> v (depends the flag)
+            // Edge u -> v (depends on the flag)
             const v = object[1];
-            addEdge(u, v, 0);
-          }   
+            addEdge(u, v, "");
+          }
         } else if (object.length == 3) {
           // Edge u -> v with weight
           const u = object[0];
@@ -103,20 +102,7 @@ class App extends Component {
           // create a completely new node
           const x = getRandom(0, 400);
           const y = getRandom(0, 400);
-          nodes.push({x, y, r: 25, color, text: u});
-        }
-      }
-
-      var edges = [];
-      for (var edge of edgesSet) {
-        if (prev.edgesSet.has(edge)) {
-          // edge in common with the previous version
-          var pos = prev.edges.indexOf(edge);
-          edges.push(prev.edge[pos]);
-        } else {
-          // create a new node
-          const u = findNode
-
+          nodes.push({ x, y, r: 25, color, text: u });
         }
       }
 
@@ -124,7 +110,6 @@ class App extends Component {
         nodesColor: nodesColor,
         edgesSet: edgesSet,
         nodes: nodes,
-        edges: edges,
       }
     });
   }
@@ -163,12 +148,12 @@ class App extends Component {
             type="text"
             className="input"
             onChange={this.getInput.bind(this)}
-            >
+          >
           </textarea>
 
-          <Canvas 
-            nodes={this.state.nodes} 
-            edges={this.state.edges} />
+          <Canvas
+            nodes={this.state.nodes}
+            edges={this.state.edgesSet} />
         </div>
       </div>
     );

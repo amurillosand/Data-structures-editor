@@ -1,6 +1,6 @@
 import React from "react";
 
-class Circle extends React.Component {
+class Node extends React.Component {
   constructor(props) {
     super(props);
 
@@ -48,6 +48,8 @@ class Circle extends React.Component {
   }
 
   render() {
+    // console.clear();
+    console.log("Node " + this.props.text, this.state);
     // TODO: try to change the color of the letters according to the color
     // lightColor -> darkFont, and viceversa
 
@@ -78,4 +80,4 @@ class Circle extends React.Component {
   }
 }
 
-export default Circle;
+export default Node;
