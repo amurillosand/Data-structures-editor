@@ -1,62 +1,93 @@
 import React, { Component } from "react";
-import "./styles.css"
-
+import { getRandom } from "./Stuff";
 import Node from "./Node";
-import Edge from "./Edge";
+import { Edge } from "./Edge";
+
+import "./styles.css"
 
 class Canvas extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      nodesInfo: [],
       printableNodes: [],
-      printableEdges: [],
     };
   }
 
-  componentDidUpdate(prevProps) {
-    if (this.props != prevProps) {
-      console.clear();
-      console.log("Update!!!!!");
-      console.log("Nodes", this.props.nodes);
-      console.log("Edges", this.props.edges);
+  updatePosition = (text, x, y) => {
+    const nodesInfo = this.state.nodesInfo.map((node) => {
+      if (node.text === text) {
+        node.x = x;
+        node.y = y;
+      }
+      return node;
+    });
 
-      const printableNodes = this.props.nodes.map((node) => {
+    this.setState({
+      nodesInfo: nodesInfo
+    });
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props !== prevProps) {
+      var nodesInfo = []
+      for (var [nodeText, color] of this.props.nodesColor) {
+        if (prevProps.nodesColor.has(nodeText)) {
+          // node in common with the previous version
+          var prevNode = this.state.nodesInfo.find(node => {
+            return node.text === nodeText;
+          });
+          // just update the color
+          prevNode.color = color;
+          nodesInfo.push(prevNode);
+        } else {
+          // create a completely new node
+          nodesInfo.push({ 
+            x: getRandom(25, 800), 
+            y: getRandom(25, 600), 
+            color: color, 
+            text: nodeText 
+          });
+        }
+      }
+      
+      // Create nodes to be printed
+      const printableNodes = nodesInfo.map(node => {
         return (
           <Node
             key={node.text}
-            x={node.x} y={node.y} r={node.r}
+            x={node.x} y={node.y}
             color={node.color}
-            text={node.text} />
+            text={node.text}
+            updatePosition={this.updatePosition} />
         );
       });
-      console.log("Nodes to print", printableNodes);
-
-      const printableEdges = [];
-      for (const edge of this.props.edges) {
-        const from = printableNodes.find(item => item.key === edge.from);
-        const to = printableNodes.find(item => item.key === edge.to);
-
-        printableEdges.push(
-          <Edge 
-            from={from}
-            ref={printableNodes}
-            to={to} />
-        );
-      }
-      console.log("Edges to print", printableEdges);
 
       this.setState({
-        printableNodes: printableNodes,
-        printableEdges: printableEdges,
+        nodesInfo: nodesInfo,
+        printableNodes: printableNodes
       });
-    }
+    } 
   }
 
   render() {
     return (
       <svg className="image">
-        {this.state.printableEdges}
+        {
+          this.props.edgesSet.map((edge) => {
+            console.log(edge);
+            const from = this.state.nodesInfo.find(node => {
+              return node.text === edge.from;
+            });
+            const to = this.state.nodesInfo.find(node => {
+              return node.text === edge.to;
+            });
+      
+            return <Edge from={from} to={to} />;
+          })
+        }
+
         {this.state.printableNodes}
       </svg>
     );

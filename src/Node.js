@@ -36,6 +36,8 @@ class Node extends React.Component {
       const nx = last.x - (last.offset.deltaX - deltaX);
       const ny = last.y - (last.offset.deltaY - deltaY);
 
+      this.props.updatePosition(this.props.text, nx, ny);
+
       return {
         x: nx,
         y: ny
@@ -49,7 +51,7 @@ class Node extends React.Component {
 
   render() {
     // console.clear();
-    console.log("Node " + this.props.text, this.state);
+    // console.log("Node " + this.props.text, this.state);
     // TODO: try to change the color of the letters according to the color
     // lightColor -> darkFont, and viceversa
 
@@ -58,7 +60,7 @@ class Node extends React.Component {
         <circle
           cx={this.state.x}
           cy={this.state.y}
-          r={this.props.r}
+          r={25}
           onPointerDown={this.handlePointerDown.bind(this)}
           onPointerUp={this.handlePointerUp.bind(this)}
           onPointerMove={this.handlePointerMove.bind(this)}

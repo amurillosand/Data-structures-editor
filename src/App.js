@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import Canvas from "./Canvas";
-import { getRandom, isColor, divideByTokens } from "./Stuff";
+import { isColor, divideByTokens } from "./Stuff";
 import "./styles.css"
 import "./button.css"
 
@@ -12,7 +12,6 @@ class App extends Component {
     super()
 
     this.state = {
-      nodes: [],
       nodesColor: new Map(),
       edgesSet: new Set(),
       drawTrie: false,
@@ -21,7 +20,7 @@ class App extends Component {
   }
 
   getInput(e) {
-    this.setState((prev) => {
+    this.setState(() => {
       const objects = e.target.value.split('\n').map((line) => {
         return divideByTokens(line);
       });
@@ -78,38 +77,9 @@ class App extends Component {
         }
       }
 
-      console.log(nodesColor);
-      console.log(edgesSet);
-
-      function findNode(nodes, u) {
-        // Finds the node 'u' in the current 'nodes' array
-        var pos = nodes.map((node) => {
-          return node.text;
-        }).indexOf(u);
-
-        return nodes[pos];
-      }
-
-      // Calculate things in common (get current objects from previous objects)
-      var nodes = []
-      for (var [u, color] of nodesColor) {
-        if (prev.nodesColor.has(u)) {
-          // node in common with the previous version
-          var node = findNode(prev.nodes, u);
-          node.color = color;
-          nodes.push(node);
-        } else {
-          // create a completely new node
-          const x = getRandom(0, 400);
-          const y = getRandom(0, 400);
-          nodes.push({ x, y, r: 25, color, text: u });
-        }
-      }
-
       return {
         nodesColor: nodesColor,
         edgesSet: edgesSet,
-        nodes: nodes,
       }
     });
   }
@@ -152,8 +122,8 @@ class App extends Component {
           </textarea>
 
           <Canvas
-            nodes={this.state.nodes}
-            edges={this.state.edgesSet} />
+            nodesColor={this.state.nodesColor}
+            edgesSet={Array.from(this.state.edgesSet)} />
         </div>
       </div>
     );
