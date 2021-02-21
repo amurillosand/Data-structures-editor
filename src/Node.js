@@ -1,5 +1,5 @@
 import React from "react";
-import {pickTextColor, lightenColor} from "./Stuff"
+import {isLight, pickTextColor, lightenColor} from "./Stuff"
 
 class Node extends React.Component {
   constructor(props) {
@@ -51,13 +51,21 @@ class Node extends React.Component {
   }
 
   render() {
-    // console.clear();
-    // console.log("Node " + this.props.text, this.state);
-    // TODO: try to change the color of the letters according to the color
-    // lightColor -> darkFont, and viceversa
-
-    var nodeColor = this.props.color === "transparent" ? this.props.color : lightenColor(this.props.color, 40);
-    var textColor = this.props.color === "transparent" ? "black" : pickTextColor(nodeColor);
+    var nodeColor = lightenColor(this.props.color, 40);
+    var textColor = "black";
+    
+    if (this.props.color === "transparent") {
+      nodeColor = this.props.color;
+      textColor = "black";
+    } else {
+      if (isLight(nodeColor)) {
+        // make this a little bit darker
+        nodeColor = lightenColor(this.props.color, 5);
+      } else {
+        // keep it light
+        textColor = pickTextColor(nodeColor);
+      }
+    }
 
     return (
       <g>

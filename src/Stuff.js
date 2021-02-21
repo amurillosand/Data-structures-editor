@@ -40,12 +40,16 @@ export function divideByTokens(str) {
   return result;
 }
 
-export function pickTextColor(col) {
+export function isLight(col) {
   var cur = col.charAt(0) == '#' ? col.substring(1, 7) : col;
   var r = parseInt(cur.substring(0, 2), 16); // hexToR
   var g = parseInt(cur.substring(2, 4), 16); // hexToG
   var b = parseInt(cur.substring(4, 6), 16); // hexToB
-  return (((r * 0.299) + (g * 0.587) + (b * 0.114)) > 186) ? "black" : "white";
+  return (((r * 0.299) + (g * 0.587) + (b * 0.114)) > 186);
+}
+
+export function pickTextColor(col) {
+  return isLight(col) ? "black" : "white";
 }
 
 function getRGB(v) {
