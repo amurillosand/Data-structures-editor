@@ -10,9 +10,10 @@ body {
   position: static;
   /* display: block; */
   padding: 0;
-  width: 25vw;
+  width: 20vw;
   height: 48vw;
   margin: 0vw 2vw;
+  font-size: x-large;
   background-color: white;
   border:black 1px solid;
 }
@@ -21,7 +22,7 @@ body {
   position: static;
   display: inline-block;
   padding: 0;
-  width: 65vw;
+  width: 70vw;
   height: 48vw;
   margin: 0vw 2vw;
   border:black 1px solid;

@@ -56,7 +56,8 @@ class Node extends React.Component {
     // TODO: try to change the color of the letters according to the color
     // lightColor -> darkFont, and viceversa
 
-    var bgColor = lightenColor(this.props.color, 40);
+    var nodeColor = this.props.color === "transparent" ? this.props.color : lightenColor(this.props.color, 40);
+    var textColor = this.props.color === "transparent" ? "black" : pickTextColor(nodeColor);
 
     return (
       <g>
@@ -67,11 +68,11 @@ class Node extends React.Component {
           onPointerDown={this.handlePointerDown.bind(this)}
           onPointerUp={this.handlePointerUp.bind(this)}
           onPointerMove={this.handlePointerMove.bind(this)}
-          fill={bgColor}
+          fill={nodeColor}
           stroke="black" />
 
         <text  
-          fill={pickTextColor(bgColor)}
+          fill={textColor}
           x={this.state.x} 
           y={this.state.y} 
           fontSize={15} 

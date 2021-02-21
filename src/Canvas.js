@@ -84,7 +84,12 @@ class Canvas extends Component {
               return node.text === edge.to;
             });
       
-            return <Edge from={from} to={to} text={edge.weight} />;
+            return (
+              <Edge 
+                from={from} to={to} 
+                text={edge.weight} 
+                directed={this.props.directed} />
+            );
           })
         }
 

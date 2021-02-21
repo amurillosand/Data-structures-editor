@@ -1,33 +1,90 @@
 import React from "react"
 
+function length(p) {
+  return Math.sqrt(p.x * p.x + p.y * p.y);
+}
+
+function dif(a, b) {
+  return { x: a.x - b.x, y: a.y - b.y };
+}
+
+function sum(a, b) {
+  return { x: a.x + b.x, y: a.y + b.y };
+}
+
+function mul(a, k) {
+  return { x: a.x * k, y: a.y * k };
+}
+
+function unit(p) {
+  return { x: p.x / length(p), y: p.y / length(p) };
+}
+
+function perp(p) {
+  return { x: -p.y, y: p.x };
+}
+
 export function Edge(props) {
   console.log("Create edge", props)
 
-  var textPos = {x: 0, y: 0};
-  if (props.from !== undefined && props.to !== undefined) {
-    textPos.x = (props.from.x + props.to.x) / 2;
-    textPos.y = (props.from.y + props.to.y) / 2;
+  const { from, to, text, directed } = props;
+
+  var bothEndpoints = (from !== undefined && to !== undefined);
+
+  var textPos = { x: 0, y: 0 };
+  if (bothEndpoints) {
+    textPos.x = (from.x + to.x) / 2;
+    textPos.y = (from.y + to.y) / 2;
+  }
+
+  function getPath() {
+    var path = [];
+    var dir = unit(dif(from, to));
+
+    var r = 25;
+
+    var p = sum(to, mul(dir, r));
+    var q = sum(to, mul(dir, r + 8));
+    var perpQ = unit(perp(dif(p, q)));
+    var perp1 = sum(q, mul(perpQ, 5));
+    var perp2 = sum(q, mul(perpQ, -5));
+
+    var str =
+      " M " + p.x + "," + p.y +
+      " " + perp1.x + ", " + perp1.y +
+      " " + perp2.x + " " + perp2.y + " z ";
+    console.log(str);
+
+    return str;
   }
 
   return (
     <g>
       {
-        (props.from !== undefined && props.to !== undefined) &&
-        <line 
-          x1={props.from.x} y1={props.from.y} 
-          x2={props.to.x} y2={props.to.y} 
+        bothEndpoints &&
+        <line
+          x1={from.x} y1={from.y}
+          x2={to.x} y2={to.y}
+          stroke="black"
+          strokeWidth={1.5} />
+      }
+
+      { (bothEndpoints && directed) &&
+        <path
+          d={getPath()}
+          fill="black"
           stroke="black" />
       }
 
       {
-        (props.from !== undefined && props.to !== undefined && props.text) &&
-        <text 
-          x={textPos.x + 20} 
-          y={textPos.y + 20} 
-          fill="black">
-          {props.text}
+        (bothEndpoints && text) &&
+        <text
+          x={textPos.x + 10}
+          y={textPos.y + 10}
+          fill="black" >
+          {text}
         </text>
       }
-    </g> 
+    </g>
   );
 }

@@ -15,8 +15,8 @@ class App extends Component {
     this.state = {
       nodesColor: new Map(),
       edgesSet: new Set(),
-      drawTrie: false,
       drawGraph: true,
+      directed: true
     }
   }
 
@@ -85,32 +85,29 @@ class App extends Component {
     });
   }
 
-  drawGraphButton(e) {
-    this.setState({
-      drawGraph: true,
-      drawTrie: false
+  toDrawButton(e) {
+    this.setState((prev) => {
+      return {drawGraph: !prev.drawGraph}
     });
   }
 
-  drawTrieButton(e) {
-    this.setState({
-      drawGraph: false,
-      drawTrie: true
+  directedEdges(e) {
+    this.setState((prev) => {
+      return {directed: !prev.directed}
     });
   }
+
 
   render() {
     return (
       <div>
         <div className="multi-button">
-          <button>Graph editor</button>
-
-          <button onClick={this.drawGraphButton.bind(this)} >
-            Draw Graph
+          <button onClick={this.toDrawButton.bind(this)}> 
+            {this.state.drawGraph ? 'Draw trie' : 'Draw graph'}
           </button>
 
-          <button onClick={this.drawTrieButton.bind(this)}>
-            Draw trie
+          <button onClick={this.directedEdges.bind(this)}>
+            {"draw " + (this.state.directed ? "Un-directed" : "Directed")} 
           </button>
         </div>
 
@@ -118,13 +115,13 @@ class App extends Component {
           <textarea
             type="text"
             className="input"
-            onChange={this.getInput.bind(this)}
-          >
+            onChange={this.getInput.bind(this)} >
           </textarea>
 
           <Canvas
             nodesColor={this.state.nodesColor}
-            edgesSet={Array.from(this.state.edgesSet)} />
+            edgesSet={Array.from(this.state.edgesSet)}
+            directed={this.state.directed} />
         </div>
       </div>
     );
