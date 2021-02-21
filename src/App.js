@@ -14,7 +14,7 @@ class App extends Component {
 
     this.state = {
       nodesColor: new Map(),
-      edgesSet: new Set(),
+      edges: new Map(),
       drawGraph: true,
       directed: true
     }
@@ -27,19 +27,31 @@ class App extends Component {
       });
 
       var nodesColor = new Map();
-      var edgesSet = new Set()
+      var edges = new Map()
 
       function addNode(node, color = defaultColorNode) {
         nodesColor.set(node, color); // update color or set it for first time 
       }
 
-      function addEdge(from, to, weight) {
+      function addEdge(from, to, weight, color = "black") {
         // Adds the edges to a set to use them later
         if (!nodesColor.has(from))
           addNode(from);
         if (!nodesColor.has(to))
           addNode(to);
-        edgesSet.add({ from, to, weight });
+
+        if (!edges.has({ from, to })) {
+          edges.set({ from, to }, { weight, color });
+        } else {
+          var val = edges.get({ from, to });
+          if (weight.length > 0) {
+            val.weight = weight;
+          }
+          if (color !== "black") {
+            val.color = color;
+          }
+          edges.set({ from, to }, val);
+        }
       }
 
       /*
@@ -70,44 +82,74 @@ class App extends Component {
             addEdge(u, v, "");
           }
         } else if (object.length == 3) {
-          // Edge u -> v with weight
           const u = object[0];
           const v = object[1];
-          const weight = object[2];
-          addEdge(u, v, weight);
+          const x = object[2];
+          if (isColor(x)) {
+            // Edge u -> v with color
+            addEdge(u, v, "", x);
+          } else {
+            // Edge u -> v with weight
+            const weight = object[2];
+            addEdge(u, v, weight);
+          }
+        } else if (object.length == 4) {
+          const u = object[0];
+          const v = object[1];
+          var weight = object[2];
+          var x = object[3];
+          if (isColor(weight)) {
+            [x, weight] = [weight, x];
+          } 
+          
+          if (isColor(x)) {
+            addEdge(u, v, weight, x);
+          } else {
+            console.log("wtf bro!!!");
+          }
         }
       }
 
       return {
         nodesColor: nodesColor,
-        edgesSet: edgesSet,
+        edges: edges,
       }
     });
   }
 
   toDrawButton(e) {
     this.setState((prev) => {
-      return {drawGraph: !prev.drawGraph}
+      return { drawGraph: !prev.drawGraph }
     });
   }
 
   directedEdges(e) {
     this.setState((prev) => {
-      return {directed: !prev.directed}
+      return { directed: !prev.directed }
     });
   }
 
-
   render() {
+    const placeholderText = [
+      "   Draw trie",
+      "   Draw graph\n\n" +
+      "u (single node)\n" +
+      "u v (un-weighted edge)\n" +
+      "u v w (weighted edge)\n\n" +
+      "u color (colored node)\n" +
+      "u v color (colored edge)\n\n" + 
+      "u v w color\nu v color w\n(weighted-colored edge)"
+    ];
+
     return (
       <div>
         <div className="multi-button">
-          <button onClick={this.toDrawButton.bind(this)}> 
-            {this.state.drawGraph ? 'Draw trie' : 'Draw graph'}
+          <button onClick={this.toDrawButton.bind(this)}>
+            {"Drawing " + (this.state.drawGraph ? "graph" : "trie")}
           </button>
 
           <button onClick={this.directedEdges.bind(this)}>
-            {"draw " + (this.state.directed ? "Un-directed" : "Directed")} 
+            {this.state.directed ? "Directed" : "Un-directed"}
           </button>
         </div>
 
@@ -115,12 +157,12 @@ class App extends Component {
           <textarea
             type="text"
             className="input"
-            onChange={this.getInput.bind(this)} >
-          </textarea>
+            onChange={this.getInput.bind(this)}
+            placeholder={placeholderText[this.state.drawGraph ? 1 : 0]} />
 
           <Canvas
             nodesColor={this.state.nodesColor}
-            edgesSet={Array.from(this.state.edgesSet)}
+            edges={Array.from(this.state.edges)}
             directed={this.state.directed} />
         </div>
       </div>

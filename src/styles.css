@@ -9,8 +9,8 @@ body {
 .input {
   position: static;
   /* display: block; */
-  padding: 0;
-  width: 20vw;
+  padding: .5em;
+  width: 22vw;
   height: 48vw;
   margin: 0vw 2vw;
   font-size: x-large;
@@ -24,6 +24,6 @@ body {
   padding: 0;
   width: 70vw;
   height: 48vw;
-  margin: 0vw 2vw;
+  /* margin: 0vw 2vw; */
   border:black 1px solid;
 }

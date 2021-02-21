@@ -27,7 +27,7 @@ function perp(p) {
 export function Edge(props) {
   console.log("Create edge", props)
 
-  const { from, to, text, directed } = props;
+  const { from, to, weight, color, directed } = props;
 
   var bothEndpoints = (from !== undefined && to !== undefined);
 
@@ -38,7 +38,6 @@ export function Edge(props) {
   }
 
   function getPath() {
-    var path = [];
     var dir = unit(dif(from, to));
 
     var r = 25;
@@ -58,6 +57,8 @@ export function Edge(props) {
     return str;
   }
 
+  const boldEdge = (color === "black" ? 1.5 : 3);
+
   return (
     <g>
       {
@@ -65,24 +66,24 @@ export function Edge(props) {
         <line
           x1={from.x} y1={from.y}
           x2={to.x} y2={to.y}
-          stroke="black"
-          strokeWidth={1.5} />
+          stroke={color}
+          strokeWidth={boldEdge} />
       }
 
       { (bothEndpoints && directed) &&
         <path
           d={getPath()}
-          fill="black"
-          stroke="black" />
+          fill={color}
+          stroke={color} />
       }
 
       {
-        (bothEndpoints && text) &&
+        (bothEndpoints && weight) &&
         <text
           x={textPos.x + 10}
           y={textPos.y + 10}
           fill="black" >
-          {text}
+          {weight}
         </text>
       }
     </g>

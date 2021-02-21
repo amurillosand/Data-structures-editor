@@ -75,19 +75,20 @@ class Canvas extends Component {
     return (
       <svg className="image">
         {
-          this.props.edgesSet.map((edge) => {
+          this.props.edges.map((edge) => {
             console.log(edge);
             const from = this.state.nodesInfo.find(node => {
-              return node.text === edge.from;
+              return node.text === edge[0].from;
             });
             const to = this.state.nodesInfo.find(node => {
-              return node.text === edge.to;
+              return node.text === edge[0].to;
             });
       
             return (
               <Edge 
                 from={from} to={to} 
-                text={edge.weight} 
+                weight={edge[1].weight} 
+                color={edge[1].color}
                 directed={this.props.directed} />
             );
           })
