@@ -5,7 +5,8 @@ import { isColor, divideByTokens } from "./Stuff";
 import "./styles.css"
 import "./button.css"
 
-const defaultColorNode = '#c9a9ff'
+// const defaultColorNode = "#c9a9ff"
+const defaultColorNode = "#a181d7"
 
 class App extends Component {
   constructor() {

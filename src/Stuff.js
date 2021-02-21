@@ -40,10 +40,52 @@ export function divideByTokens(str) {
   return result;
 }
 
-export function pickTextColor(bgColor) {
-  var color = bgColor.charAt(0) == '#' ? bgColor.substring(1, 7) : bgColor;
-  var r = parseInt(color.substring(0, 2), 16); // hexToR
-  var g = parseInt(color.substring(2, 4), 16); // hexToG
-  var b = parseInt(color.substring(4, 6), 16); // hexToB
+export function pickTextColor(col) {
+  var cur = col.charAt(0) == '#' ? col.substring(1, 7) : col;
+  var r = parseInt(cur.substring(0, 2), 16); // hexToR
+  var g = parseInt(cur.substring(2, 4), 16); // hexToG
+  var b = parseInt(cur.substring(4, 6), 16); // hexToB
   return (((r * 0.299) + (g * 0.587) + (b * 0.114)) > 186) ? "black" : "white";
+}
+
+function getRGB(v) {
+  var el = document.createElement("div");
+  el.style["background-color"] = v;
+  document.body.appendChild(el);
+
+  var style = window.getComputedStyle(el);
+  var color = style["backgroundColor"];
+  document.body.removeChild(el);
+
+  return color;
+}
+
+function parseColor(color) {
+  var arr=[]; 
+  color.replace(/[\d+\.]+/g, function(v) { 
+    arr.push(parseFloat(v));
+  });
+  return "#" + arr.slice(0, 3).map(toHex).join("");
+}
+
+function toHex(int) {
+  var hex = int.toString(16);
+  return hex.length == 1 ? "0" + hex : hex;
+}
+
+export function lightenColor(col, amt) {
+  if (col.charAt(0) != '#') {
+    col = parseColor(getRGB(col));
+  }
+  
+  var cur = col.charAt(0) == '#' ? col.substring(1, 7) : col;
+  
+  var r = Math.max(Math.min(255, parseInt(cur.substring(0, 2), 16) + amt), 0).toString(16)
+  var g = Math.max(Math.min(255, parseInt(cur.substring(2, 4), 16) + amt), 0).toString(16)
+  var b = Math.max(Math.min(255, parseInt(cur.substring(4, 6), 16) + amt), 0).toString(16)
+  
+  const rr = (r.length < 2 ? '0' : '') + r
+  const gg = (g.length < 2 ? '0' : '') + g
+  const bb = (b.length < 2 ? '0' : '') + b
+  return `#${rr}${gg}${bb}`
 }

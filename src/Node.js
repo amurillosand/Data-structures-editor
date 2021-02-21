@@ -1,4 +1,5 @@
 import React from "react";
+import {pickTextColor, lightenColor} from "./Stuff"
 
 class Node extends React.Component {
   constructor(props) {
@@ -55,6 +56,8 @@ class Node extends React.Component {
     // TODO: try to change the color of the letters according to the color
     // lightColor -> darkFont, and viceversa
 
+    var bgColor = lightenColor(this.props.color, 40);
+
     return (
       <g>
         <circle
@@ -64,14 +67,14 @@ class Node extends React.Component {
           onPointerDown={this.handlePointerDown.bind(this)}
           onPointerUp={this.handlePointerUp.bind(this)}
           onPointerMove={this.handlePointerMove.bind(this)}
-          fill={this.props.color}
+          fill={bgColor}
           stroke="black" />
 
         <text  
-          fill="black"
+          fill={pickTextColor(bgColor)}
           x={this.state.x} 
           y={this.state.y} 
-          fontSize={14} 
+          fontSize={15} 
           textAnchor="middle"
           alignmentBaseline="central"
           fontFamily="Helvetica Neue" >
