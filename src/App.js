@@ -131,14 +131,17 @@ class App extends Component {
 
   render() {
     const placeholderText = [
-      "   Draw trie",
-      "   Draw graph\n\n" +
-      "u (single node)\n" +
-      "u v (un-weighted edge)\n" +
-      "u v w (weighted edge)\n\n" +
-      "u color (colored node)\n" +
-      "u v color (colored edge)\n\n" + 
-      "u v w color\nu v color w\n(weighted-colored edge)"
+      "   Draw trie\n" +
+      "List down all strings of the trie\n" +
+      "str [color] [label]",
+
+      "   Draw graph\n" +
+      "[opt] means optional\n\n" +
+      "Nodes:\n" +
+      "u [color]\n\n" +
+      "Edges:\n" +
+      "u v [weight] [color]\n" +
+      "u v [color] [weight]\n"
     ];
 
     return (
