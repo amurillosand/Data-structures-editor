@@ -1,5 +1,5 @@
 import React from "react";
-import {isLight, pickTextColor, lightenColor} from "./Stuff"
+import { isLight, pickTextColor, lightenColor } from "./Stuff"
 
 class Node extends React.Component {
   constructor(props) {
@@ -21,7 +21,7 @@ class Node extends React.Component {
 
     this.setState({
       dragging: true,
-      offset: {deltaX, deltaY}
+      offset: { deltaX, deltaY }
     });
   }
 
@@ -33,11 +33,11 @@ class Node extends React.Component {
     this.setState((last) => {
       if (!last.dragging)
         return {};
-    
+
       const nx = last.x - (last.offset.deltaX - deltaX);
       const ny = last.y - (last.offset.deltaY - deltaY);
 
-      this.props.updatePosition(this.props.text, nx, ny);
+      this.props.updatePosition(this.props.id, nx, ny);
 
       return {
         x: nx,
@@ -47,13 +47,13 @@ class Node extends React.Component {
   }
 
   handlePointerUp(e) {
-    this.setState({dragging: false});
+    this.setState({ dragging: false });
   }
 
   render() {
     var nodeColor = lightenColor(this.props.color, 40);
     var textColor = "black";
-    
+
     if (this.props.color === "transparent") {
       nodeColor = this.props.color;
       textColor = "black";
@@ -79,15 +79,15 @@ class Node extends React.Component {
           fill={nodeColor}
           stroke="black" />
 
-        <text  
+        <text
           fill={textColor}
-          x={this.state.x} 
-          y={this.state.y} 
-          fontSize={15} 
+          x={this.state.x}
+          y={this.state.y}
+          fontSize={15}
           textAnchor="middle"
           alignmentBaseline="central"
           fontFamily="Helvetica Neue" >
-            {this.props.text}
+          {this.props.label}
         </text>
       </g>
     );
