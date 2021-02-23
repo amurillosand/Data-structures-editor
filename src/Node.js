@@ -37,7 +37,7 @@ class Node extends React.Component {
       const nx = last.x - (last.offset.deltaX - deltaX);
       const ny = last.y - (last.offset.deltaY - deltaY);
 
-      this.props.updatePosition(this.props.text, nx, ny);
+      this.props.updatePosition(this.props.id, nx, ny);
 
       return {
         x: nx,
@@ -87,7 +87,7 @@ class Node extends React.Component {
           textAnchor="middle"
           alignmentBaseline="central"
           fontFamily="Helvetica Neue" >
-            {this.props.text}
+            {this.props.label}
         </text>
       </g>
     );
