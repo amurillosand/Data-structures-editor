@@ -22,8 +22,8 @@ export default class Trie {
   }
 
   insert(word, color) {
-    var node = this.root;
-    for (var c of word) {
+    let node = this.root;
+    for (let c of word) {
       if (!node.children.has(c)) {
         node.children.set(c, new Node(this.cnt++));
       }
@@ -34,8 +34,8 @@ export default class Trie {
   }
 
   dfs(node, label) {
-    this.addNode(node.id, label, node.color);
-    for (var [c, child] of node.children) {
+    this.addNode(node.id, {label: label, color: node.color});
+    for (let [c, child] of node.children) {
       this.dfs(child, c);
       this.addEdge(node.id, child.id);
     }

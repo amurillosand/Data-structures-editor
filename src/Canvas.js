@@ -32,7 +32,7 @@ class Canvas extends Component {
   componentDidUpdate(prevProps) {
     if (this.props !== prevProps) {
       var nodesInfo = []
-      for (var [curNode, info] of this.props.nodes) {
+      for (let [curNode, info] of this.props.nodes) {
         if (prevProps.nodes.has(curNode)) {
           // node in common with the previous version
           var prevNode = this.state.nodesInfo.find(node => {

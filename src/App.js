@@ -1,14 +1,16 @@
-import React, { Component } from 'react';
-
+import React from 'react';
 import Canvas from "./Canvas";
+import Trie from "./Trie";
+
 import { isColor, divideByTokens } from "./Stuff";
+
 import "./styles.css"
 import "./button.css"
 
 // const defaultColorNode = "#c9a9ff"
 const defaultColorNode = "#a181d7"
 
-class App extends Component {
+class App extends React.Component {
   constructor() {
     super()
 
@@ -71,16 +73,16 @@ class App extends Component {
       }
      
       if (this.state.drawGraph === true) {
-        // Add all the current objects
-        for (var object of objects) {
-          if (object.length == 0)
+        // Add all the current objects of the graph
+        for (let object of objects) {
+          if (object.length === 0)
             continue;
 
-          if (object.length == 1) {
+          if (object.length === 1) {
             const u = object[0];
             // Single node
             addNode(u, {});
-          } else if (object.length == 2) {
+          } else if (object.length === 2) {
             const u = object[0];
             const x = object[1];
             if (isColor(x)) {
@@ -91,7 +93,7 @@ class App extends Component {
               const v = object[1];
               addEdge(u, v, "");
             }
-          } else if (object.length == 3) {
+          } else if (object.length === 3) {
             const u = object[0];
             const v = object[1];
             const x = object[2];
@@ -103,7 +105,7 @@ class App extends Component {
               const weight = object[2];
               addEdge(u, v, weight);
             }
-          } else if (object.length == 4) {
+          } else if (object.length === 4) {
             const u = object[0];
             const v = object[1];
             var weight = object[2];
@@ -121,7 +123,20 @@ class App extends Component {
         }
       } else {
         // Draw trie D:
+        const trie = new Trie(addNode, addEdge);
+        for (let object of objects) {
+          if (object.length >= 1) {
+            const word = object[0];
+            var color = "red";
+            if (object.length === 2 && isColor(object[1])) {
+              color = object[1];
+            }
 
+            trie.insert(word, color);
+          }
+        }
+
+        trie.dfs(trie.root, "*");
       }
 
       console.log(objects);
