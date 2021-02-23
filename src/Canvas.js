@@ -15,9 +15,9 @@ class Canvas extends Component {
     };
   }
 
-  updatePosition = (id, x, y) => {
+  updatePosition = (text, x, y) => {
     const nodesInfo = this.state.nodesInfo.map((node) => {
-      if (node.id === id) {
+      if (node.text === text) {
         node.x = x;
         node.y = y;
       }
@@ -32,24 +32,22 @@ class Canvas extends Component {
   componentDidUpdate(prevProps) {
     if (this.props !== prevProps) {
       var nodesInfo = []
-      for (var [curNode, info] of this.props.nodes) {
-        if (prevProps.nodes.has(curNode)) {
+      for (var [nodeText, color] of this.props.nodesColor) {
+        if (prevProps.nodesColor.has(nodeText)) {
           // node in common with the previous version
           var prevNode = this.state.nodesInfo.find(node => {
-            return node.id === curNode;
+            return node.text === nodeText;
           });
           // just update the color
-          prevNode.color = info.color;
-          prevNode.label = info.label;
+          prevNode.color = color;
           nodesInfo.push(prevNode);
         } else {
           // create a completely new node
           nodesInfo.push({ 
-            id: curNode,
             x: getRandom(25, 800), 
             y: getRandom(25, 600), 
-            color: info.color, 
-            label: info.label 
+            color: color, 
+            text: nodeText 
           });
         }
       }
@@ -59,10 +57,9 @@ class Canvas extends Component {
         return (
           <Node
             key={node.text}
-            id={node.id}
             x={node.x} y={node.y}
             color={node.color}
-            label={node.label}
+            text={node.text}
             updatePosition={this.updatePosition} />
         );
       });
@@ -81,10 +78,10 @@ class Canvas extends Component {
           this.props.edges.map((edge) => {
             console.log(edge);
             const from = this.state.nodesInfo.find(node => {
-              return node.id === edge[0].from;
+              return node.text === edge[0].from;
             });
             const to = this.state.nodesInfo.find(node => {
-              return node.id === edge[0].to;
+              return node.text === edge[0].to;
             });
       
             return (

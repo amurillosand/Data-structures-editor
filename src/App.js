@@ -5,41 +5,39 @@ import { isColor, divideByTokens } from "./Stuff";
 import "./styles.css"
 import "./button.css"
 
-import Trie from "./Trie";
-
-const defaultColorNode = "#c9a9ff";
-// const defaultColorNode = "#a181d7"
+// const defaultColorNode = "#c9a9ff"
+const defaultColorNode = "#a181d7"
 
 class App extends Component {
   constructor() {
     super()
 
     this.state = {
-      nodes: new Map(),
+      nodesColor: new Map(),
       edges: new Map(),
-      drawGraph: false,
+      drawGraph: true,
       directed: true
     }
   }
 
-  readGraph(e) {
+  getInput(e) {
     this.setState(() => {
       const objects = e.target.value.split('\n').map((line) => {
         return divideByTokens(line);
       });
 
-      var nodes = new Map();
+      var nodesColor = new Map();
       var edges = new Map()
 
       function addNode(node, color = defaultColorNode) {
-        nodes.set(node, {color: color, label: node}); // update color or set it for first time 
+        nodesColor.set(node, color); // update color or set it for first time 
       }
 
       function addEdge(from, to, weight, color = "black") {
         // Adds the edges to a set to use them later
-        if (!nodes.has(from))
+        if (!nodesColor.has(from))
           addNode(from);
-        if (!nodes.has(to))
+        if (!nodesColor.has(to))
           addNode(to);
 
         if (!edges.has({ from, to })) {
@@ -55,6 +53,13 @@ class App extends Component {
           edges.set({ from, to }, val);
         }
       }
+
+      /*
+        u
+        u color
+        u v
+        u v weight
+      */
 
       // Add all the current objects
       for (var object of objects) {
@@ -106,63 +111,7 @@ class App extends Component {
       }
 
       return {
-        nodes: nodes,
-        edges: edges,
-      }
-    });
-  }
-
-  readTrie(e) {
-    this.setState(() => {
-      const objects = e.target.value.split('\n').map((line) => {
-        return divideByTokens(line);
-      });
-
-      console.log(objects);
-
-      var nodes = new Map();
-      var edges = new Map()
-
-      function addNode(node, label = "", color = defaultColorNode) {
-        nodes.set(node, {color: color, label: label}); // update color or set it for first time 
-      }
-
-      function addEdge(from, to, weight = "", color = "black") {
-        // Adds the edges to a set to use them later
-        if (!nodes.has(from))
-          addNode(from);
-        if (!nodes.has(to))
-          addNode(to);
-
-        if (!edges.has({ from, to })) {
-          edges.set({ from, to }, { weight, color });
-        } else {
-          var val = edges.get({ from, to });
-          if (weight.length > 0) {
-            val.weight = weight;
-          }
-          if (color !== "black") {
-            val.color = color;
-          }
-          edges.set({ from, to }, val);
-        }
-      } 
-
-      const trie = new Trie(addNode, addEdge);
-      for (const object of objects) {
-        if (object.length >= 1) {
-          var word = object[0];
-          var color = defaultColorNode;
-          if (object.length >= 2 && isColor(object[1])) {
-            color = object[1];
-          }
-          trie.insert(word, color);
-        }
-      }
-      trie.dfs(trie.root, "");
-
-      return {
-        nodes: nodes,
+        nodesColor: nodesColor,
         edges: edges,
       }
     });
@@ -183,9 +132,8 @@ class App extends Component {
   render() {
     const placeholderText = [
       "   Draw trie\n" +
-      "[opt] means optional\n\n" +
-      "Nodes:\n" +
-      "word [color]",
+      "List down all strings of the trie\n" +
+      "str [color] [label]",
 
       "   Draw graph\n" +
       "[opt] means optional\n\n" +
@@ -212,11 +160,11 @@ class App extends Component {
           <textarea
             type="text"
             className="input"
-            onChange={this.state.drawGraph ? this.readGraph.bind(this) : this.readTrie.bind(this)}
+            onChange={this.getInput.bind(this)}
             placeholder={placeholderText[this.state.drawGraph ? 1 : 0]} />
 
           <Canvas
-            nodes={this.state.nodes}
+            nodesColor={this.state.nodesColor}
             edges={Array.from(this.state.edges)}
             directed={this.state.directed} />
         </div>

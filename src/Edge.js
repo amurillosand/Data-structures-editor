@@ -25,7 +25,7 @@ function perp(p) {
 }
 
 export function Edge(props) {
-  // console.log("Create edge", props)
+  console.log("Create edge", props)
 
   const { from, to, weight, color, directed } = props;
 
@@ -52,7 +52,7 @@ export function Edge(props) {
       " M " + p.x + "," + p.y +
       " " + perp1.x + ", " + perp1.y +
       " " + perp2.x + " " + perp2.y + " z ";
-    // console.log(str);
+    console.log(str);
 
     return str;
   }
