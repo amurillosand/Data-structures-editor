@@ -17,8 +17,9 @@ class App extends React.Component {
     this.state = {
       nodes: new Map(),
       edges: new Map(),
-      drawGraph: true,
-      directed: true
+      drawGraph: false,
+      directed: true,
+      asATree: true
     }
   }
 
@@ -28,8 +29,8 @@ class App extends React.Component {
         return divideByTokens(line);
       });
 
-      var nodes = new Map();
-      var edges = new Map()
+      let nodes = new Map();
+      let edges = new Map()
 
       function addNode(node, val) {
         if (!nodes.has(node)) {
@@ -51,7 +52,7 @@ class App extends React.Component {
         nodes.set(node, val);
       }
 
-      function addEdge(from, to, weight, color = "black") {
+      function addEdge(from, to, weight = "", color = "black") {
         // Adds the edges to a set to use them later
         if (!nodes.has(from))
           addNode(from, {});
@@ -127,7 +128,7 @@ class App extends React.Component {
         for (let object of objects) {
           if (object.length >= 1) {
             const word = object[0];
-            var color = "red";
+            let color = "red";
             if (object.length === 2 && isColor(object[1])) {
               color = object[1];
             }
@@ -138,8 +139,6 @@ class App extends React.Component {
 
         trie.dfs(trie.root, "*");
       }
-
-      console.log(objects);
 
       return {
         nodes: nodes,
@@ -157,6 +156,12 @@ class App extends React.Component {
   directedEdges(e) {
     this.setState((prev) => {
       return { directed: !prev.directed }
+    });
+  }
+
+  drawAsATree(e) {
+    this.setState((prev) => {
+      return { asATree: !prev.asATree }
     });
   }
 
@@ -186,6 +191,10 @@ class App extends React.Component {
           <button onClick={this.directedEdges.bind(this)}>
             {this.state.directed ? "Directed" : "Un-directed"}
           </button>
+
+          <button onClick={this.drawAsATree.bind(this)}>
+            {this.state.asATree ? "As a tree" : "Random"}
+          </button>
         </div>
 
         <div>
@@ -198,7 +207,8 @@ class App extends React.Component {
           <Canvas
             nodes={this.state.nodes}
             edges={Array.from(this.state.edges)}
-            directed={this.state.directed} />
+            directed={this.state.directed} 
+            asATree={this.state.asATree} />
         </div>
       </div>
     );
