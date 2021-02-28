@@ -7,8 +7,8 @@ import { isColor, divideByTokens } from "./Stuff";
 import "./styles.css"
 import "./button.css"
 
-// const defaultColorNode = "#c9a9ff"
-const defaultColorNode = "#a181d7"
+const defaultColorNode = "#c9a9ff";
+// const defaultColorNode = "#a181d7";
 
 class App extends React.Component {
   constructor() {
@@ -17,9 +17,9 @@ class App extends React.Component {
     this.state = {
       nodes: new Map(),
       edges: new Map(),
-      drawGraph: false,
+      drawGraph: true,
       directed: true,
-      asATree: true
+      likeTree: false
     }
   }
 
@@ -159,9 +159,9 @@ class App extends React.Component {
     });
   }
 
-  drawAsATree(e) {
-    this.setState((prev) => {
-      return { asATree: !prev.asATree }
+  drawLikeTree(e) {
+    this.setState((prevState) => {
+      return {likeTree: !prevState.likeTree}
     });
   }
 
@@ -192,8 +192,8 @@ class App extends React.Component {
             {this.state.directed ? "Directed" : "Un-directed"}
           </button>
 
-          <button onClick={this.drawAsATree.bind(this)}>
-            {this.state.asATree ? "As a tree" : "Random"}
+          <button onClick={this.drawLikeTree.bind(this)}>
+            {this.state.likeTree ? "As a tree" : "Random"}
           </button>
         </div>
 
@@ -208,7 +208,7 @@ class App extends React.Component {
             nodes={this.state.nodes}
             edges={Array.from(this.state.edges)}
             directed={this.state.directed} 
-            asATree={this.state.asATree} />
+            likeTree={this.state.likeTree} />
         </div>
       </div>
     );

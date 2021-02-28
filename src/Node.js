@@ -50,6 +50,15 @@ class Node extends React.Component {
     this.setState({dragging: false});
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props !== prevProps) {
+      this.setState({
+        x: this.props.x,
+        y: this.props.y
+      });
+    }
+  }
+
   render() {
     var nodeColor = lightenColor(this.props.color, 40);
     var textColor = "black";
