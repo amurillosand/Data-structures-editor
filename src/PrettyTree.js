@@ -1,11 +1,12 @@
 // Reference of the algorithm: https://llimllib.github.io/pymag-trees/
 
-const distance = 70;
+let distanceY = 80;
+let distanceX = 120;
 
 function assign(u, parent = undefined, depth = 1, pos = 1) {
   u.vis = 1;
   u.x = -1;
-  u.y = depth * distance;
+  u.y = depth * distanceY;
   u.parent = parent;
   u.thread = undefined;
   u.offset = 0;
@@ -59,7 +60,7 @@ function buchheim(u) {
   u.vis = 2;
   if (noChildrenLeft(u)) {
     if (leftmostSibling(u)) {
-      u.x = leftBrother(u).x + distance;
+      u.x = leftBrother(u).x + distanceX;
     } else {
       u.x = 0;
     }
@@ -75,7 +76,7 @@ function buchheim(u) {
     const mid = (u.children[0].x + u.children[u.children.length - 1].x) / 2;
     const bro = leftBrother(u);
     if (bro) {
-      u.x = bro.x + distance;
+      u.x = bro.x + distanceX;
       u.offset = u.x - mid;
     } else {
       u.x = mid;
@@ -100,7 +101,7 @@ function apportion(u, defaultAncestor) {
       vol = left(vol);
       vor = right(vor);
       vor.ancestor = u;
-      let shift = (vil.x + sil) - (vir.x + sir) + distance;
+      let shift = (vil.x + sil) - (vir.x + sir) + distanceX;
       if (shift > 0) {
         moveSubtree(ancestor(vil, u, defaultAncestor), u, shift);
         sir = sir + shift;
@@ -157,7 +158,7 @@ function ancestor(vil, u, defaultAncestor) {
   return isChild ? vil.ancestor : defaultAncestor;
 }
 
-function dfs(u, m = distance, depth = 1, mn = undefined) {
+function dfs(u, m = distanceX, depth = 1, mn = undefined) {
   u.x += m;
   u.vis = 3;
   if (mn === undefined || u.x < mn)
@@ -179,7 +180,23 @@ function moveTree(u, mn) {
 } 
 
 export function prettyTree(props, callback) {
-  const {likeTree, nodes, edges} = props;
+  const {drawGraph, likeTree, nodes, edges} = props;
+
+  if (drawGraph) {
+    distanceY = 75;
+    distanceX = 100;
+  } else {
+    distanceY = 70;
+    distanceX = 70;
+  }
+
+  const byLabel = (a, b) => {
+    if (a.label < b.label) 
+      return -1;
+    if (a.label > b.label) 
+      return 1;
+    return 0;
+  }
 
   if (likeTree) {
     for (let u of nodes) {
@@ -187,6 +204,7 @@ export function prettyTree(props, callback) {
       u.vis = 0;
     }
 
+    const indeg = new Map();
     for (let edge of edges) {
       const u = nodes.find(node => {
         return node.id === edge[0].from;
@@ -195,19 +213,31 @@ export function prettyTree(props, callback) {
         return node.id === edge[0].to;
       });
       u.children.push(v);
+      indeg[v]++;
     }
 
-    let sum = distance / 3;
     for (let u of nodes) 
-      if (!u.vis) {
-        assign(u);
-        buchheim(u);  
-        let mn = dfs(u);
-        if (mn > 0) {
-          moveTree(u, sum);
-          sum += mn;
-        }
+      if (!drawGraph) 
+        u.children.sort(byLabel);  
+
+    let sum = 0;
+    function process(u) {
+      assign(u);
+      buchheim(u);  
+      let mn = dfs(u);
+      if (mn > 0) {
+        moveTree(u, sum);
+        sum += mn;
       }
+    }
+
+    for (let u of nodes) 
+      if (indeg[u] === 0 && !u.vis) 
+        process(u);
+      
+    for (let u of nodes) 
+      if (!u.vis) 
+        process(u);
   }
 
   callback();

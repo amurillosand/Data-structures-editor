@@ -208,6 +208,7 @@ class App extends React.Component {
             nodes={this.state.nodes}
             edges={Array.from(this.state.edges)}
             directed={this.state.directed} 
+            drawGraph={this.state.drawGraph}
             likeTree={this.state.likeTree} />
         </div>
       </div>

@@ -55,6 +55,7 @@ class Canvas extends React.Component {
       }
       
       prettyTree({
+        drawGraph: this.props.drawGraph,
         likeTree: this.props.likeTree,
         nodes: nodesInfo, 
         edges: this.props.edges
