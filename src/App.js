@@ -30,7 +30,8 @@ class App extends React.Component {
       });
 
       let nodes = new Map();
-      let edges = new Map()
+      let edges = new Map();
+      let currentNodeColor = defaultColorNode;
 
       function addNode(node, val) {
         if (!nodes.has(node)) {
@@ -38,7 +39,7 @@ class App extends React.Component {
             val.label = node;
           }
           if (!val.hasOwnProperty("color")) {
-            val.color = defaultColorNode;
+            val.color = currentNodeColor;
           }
         } else {
           const prev = nodes.get(node);
@@ -46,7 +47,8 @@ class App extends React.Component {
             val.label = prev.label;
           }
           if (!val.hasOwnProperty("color")) {
-            val.color = prev.color;
+            // val.color = prev.color;
+            val.color = currentNodeColor;
           }
         }
         nodes.set(node, val);
@@ -80,9 +82,15 @@ class App extends React.Component {
             continue;
 
           if (object.length === 1) {
-            const u = object[0];
-            // Single node
-            addNode(u, {});
+            const x = object[0];
+            if (isColor(x)) {
+              // paint everything that's below with this color
+              currentNodeColor = x;
+            } else {
+              // Single node
+              const u = object[0];
+              addNode(u, {});
+            }
           } else if (object.length === 2) {
             const u = object[0];
             const x = object[1];
@@ -125,14 +133,24 @@ class App extends React.Component {
       } else {
         // Draw trie D:
         const trie = new Trie(addNode, addEdge);
+        currentNodeColor = "red";
         for (let object of objects) {
-          if (object.length >= 1) {
+          if (object.length === 1) {
+            if (isColor(object[0])) {
+              // change the color of all below nodes
+              currentNodeColor = object[0];
+            } else {
+              // insert a word with the currentNodeColor
+              const word = object[0];
+              trie.insert(word, currentNodeColor);
+            }
+          } else if (object.length === 2) {
+            // insert a word with possibly a custom color
             const word = object[0];
-            let color = "red";
+            let color = currentNodeColor;
             if (object.length === 2 && isColor(object[1])) {
               color = object[1];
             }
-
             trie.insert(word, color);
           }
         }
@@ -170,7 +188,9 @@ class App extends React.Component {
       "   Draw trie\n" +
       "[opt] means optional\n\n" +
       "Nodes:\n" +
-      "word [color]",
+      "word [color]\n\n" +
+      "Bonus:\n" +
+      "[color]\nChanges all words below with this color\n",
 
       "   Draw graph\n" +
       "[opt] means optional\n\n" +
@@ -178,7 +198,9 @@ class App extends React.Component {
       "u [color]\n\n" +
       "Edges:\n" +
       "u v [weight] [color]\n" +
-      "u v [color] [weight]\n"
+      "u v [color] [weight]\n\n" +
+      "Bonus:\n" +
+      "[color]\nChanges all nodes below with this color\n",
     ];
 
     return (
