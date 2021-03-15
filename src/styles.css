@@ -19,11 +19,17 @@ body {
 }
 
 .image {
+  padding: 0;
+  width: 150vw;
+  height: 150vw;
+}
+
+.scrollable-image {
+  /* position: relative; */
   position: static;
   display: inline-block;
-  padding: 0;
   width: 70vw;
   height: 48vw;
-  /* margin: 0vw 2vw; */
+  overflow: auto;
   border:black 1px solid;
 }

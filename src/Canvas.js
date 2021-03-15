@@ -1,6 +1,6 @@
 import React from "react";
 import Node from "./Node";
-import { Edge } from "./Edge";
+import { Edge, Loop } from "./Edge";
 import { getRandom } from "./Stuff";
 import { prettyTree } from "./PrettyTree";
 
@@ -84,29 +84,42 @@ class Canvas extends React.Component {
   
   render() {
     return (
-      <svg className="image">
-        {
-          this.props.edges.map((edge, key) => {
-            const from = this.state.nodesInfo.find(node => {
-              return edge[0].from === node.id;
-            });
-            const to = this.state.nodesInfo.find(node => {
-              return edge[0].to === node.id;
-            });
+      <div className="scrollable-image">
+        <svg className="image">
+          {
+            this.props.edges.map((edge, key) => {
+              const from = this.state.nodesInfo.find(node => {
+                return edge[0].from === node.id;
+              });
+              const to = this.state.nodesInfo.find(node => {
+                return edge[0].to === node.id;
+              });
 
-            return (
-              <Edge
-                key={key}
-                from={from} to={to}
-                weight={edge[1].weight}
-                color={edge[1].color}
-                directed={this.props.directed} />
-            );
-          })
-        }
-        
-        {this.state.printableNodes}
-      </svg>
+              if (from === to) {
+                return (
+                  <Loop 
+                    key={key}
+                    from={from} to={to}
+                    weight={edge[1].weight}
+                    color={edge[1].color}
+                    directed={this.props.directed} />
+                );
+              } else {
+                return (
+                  <Edge
+                  key={key}
+                  from={from} to={to}
+                  weight={edge[1].weight}
+                  color={edge[1].color}
+                  directed={this.props.directed} />
+                );
+              }
+            })
+          }
+          
+          {this.state.printableNodes}
+        </svg>
+      </div>
     );
   }
 }

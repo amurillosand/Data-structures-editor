@@ -3,6 +3,15 @@
 let distanceY = 80;
 let distanceX = 120;
 
+function findDfsTree(u, parent = undefined, depth = 0) {
+  u.vis = 0;
+  for (let v of u.children) 
+    if (v.vis === -1) {
+      u.dfsTreeChildren.push(v);
+      findDfsTree(v, u, depth + 1);
+    }
+}
+
 function assign(u, parent = undefined, depth = 1, pos = 1) {
   u.vis = 1;
   u.x = -1;
@@ -183,8 +192,8 @@ export function prettyTree(props, callback) {
   const {drawGraph, likeTree, nodes, edges} = props;
 
   if (drawGraph) {
-    distanceY = 75;
-    distanceX = 100;
+    distanceY = 80;
+    distanceX = 120;
   } else {
     distanceY = 70;
     distanceX = 70;
@@ -201,10 +210,10 @@ export function prettyTree(props, callback) {
   if (likeTree) {
     for (let u of nodes) {
       u.children = [];
-      u.vis = 0;
+      u.dfsTreeChildren = [];
+      u.vis = -1;
     }
 
-    const indeg = new Map();
     for (let edge of edges) {
       const u = nodes.find(node => {
         return node.id === edge[0].from;
@@ -213,31 +222,38 @@ export function prettyTree(props, callback) {
         return node.id === edge[0].to;
       });
       u.children.push(v);
-      indeg[v]++;
     }
 
-    for (let u of nodes) 
-      if (!drawGraph) 
+    if (!drawGraph) {
+      // Drawing a trie
+      for (let u of nodes) 
         u.children.sort(byLabel);  
-
-    let sum = 0;
-    function process(u) {
-      assign(u);
-      buchheim(u);  
-      let mn = dfs(u);
-      if (mn > 0) {
-        moveTree(u, sum);
-        sum += mn;
-      }
     }
 
+    // find the dfs tree
+    for (let u of nodes) {
+      if (u.vis === -1) 
+        findDfsTree(u);
+    }
+
+    // change the children with the dfsTreeChildren
+    for (let u of nodes) {
+      u.children = u.dfsTreeChildren;  
+      delete u.dfsTreeChildren;
+    }
+  
+    // algorithm of buchheim for a pretty tree
+    let sum = 0;
     for (let u of nodes) 
-      if (indeg[u] === 0 && !u.vis) 
-        process(u);
-      
-    for (let u of nodes) 
-      if (!u.vis) 
-        process(u);
+      if (u.vis === 0) {
+        assign(u);
+        buchheim(u);  
+        let mn = dfs(u);
+        if (mn > 0) {
+          moveTree(u, sum);
+          sum += mn;
+        }
+      }
   }
 
   callback();
