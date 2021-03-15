@@ -1,7 +1,7 @@
 // Reference of the algorithm: https://llimllib.github.io/pymag-trees/
 
 let distanceY = 80;
-let distanceX = 120;
+let distanceX = 100;
 
 function findDfsTree(u, parent = undefined, depth = 0) {
   u.vis = 0;
@@ -167,16 +167,24 @@ function ancestor(vil, u, defaultAncestor) {
   return isChild ? vil.ancestor : defaultAncestor;
 }
 
-function dfs(u, m = distanceX, depth = 1, mn = undefined) {
+function dfs(u, m = distanceX, depth = 1) {
   u.x += m;
   u.vis = 3;
-  if (mn === undefined || u.x < mn)
-    mn = u.x;
+
+  let treeRange = {
+    mn: u.x,
+    mx: u.x
+  };
+
   for (let v of u.children) 
     if (v.vis === 2) {
-      mn = dfs(v, m + u.offset, depth + 1, mn);
+      let childTreeRange = dfs(v, m + u.offset, depth + 1);
+      treeRange.mn = Math.min(treeRange.mn, childTreeRange.mn);
+      treeRange.mx = Math.max(treeRange.mx, childTreeRange.mx);
     }
-  return mn;
+  console.log(u.id, treeRange);
+
+  return treeRange;
 }
 
 function moveTree(u, mn) {
@@ -192,8 +200,8 @@ export function prettyTree(props, callback) {
   const {drawGraph, likeTree, nodes, edges} = props;
 
   if (drawGraph) {
-    distanceY = 80;
-    distanceX = 120;
+    distanceY = 90;
+    distanceX = 80;
   } else {
     distanceY = 70;
     distanceX = 70;
@@ -214,6 +222,7 @@ export function prettyTree(props, callback) {
       u.vis = -1;
     }
 
+    // add edges to the tree
     for (let edge of edges) {
       const u = nodes.find(node => {
         return node.id === edge[0].from;
@@ -222,6 +231,7 @@ export function prettyTree(props, callback) {
         return node.id === edge[0].to;
       });
       u.children.push(v);
+      v.children.push(u);
     }
 
     if (!drawGraph) {
@@ -248,11 +258,18 @@ export function prettyTree(props, callback) {
       if (u.vis === 0) {
         assign(u);
         buchheim(u);  
-        let mn = dfs(u);
-        if (mn > 0) {
+        
+        // define the current tree range
+        let treeRange = dfs(u);
+        let width = treeRange.mx - treeRange.mn;
+
+        console.log(treeRange, width);
+
+        if (width >= 0) {
           moveTree(u, sum);
-          sum += mn;
+          sum += width;
         }
+        sum += distanceX;
       }
   }
 

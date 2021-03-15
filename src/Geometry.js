@@ -21,3 +21,18 @@ export function unit(p) {
 export function perp(p) {
   return { x: -p.y, y: p.x };
 }
+
+export function rotate(p, angle) {
+  return {
+    x: p.x * Math.cos(angle) - p.y * Math.sin(angle),
+    y: p.x * Math.sin(angle) + p.y * Math.cos(angle)
+  };
+}
+
+export function projectionOnCircle(c, r, p) {
+  return sum(c, mul(unit(dif(p, c)), r));
+}
+
+// Pt projection(Pt p) {
+//   return o + (p - o).unit() * r;
+// }
