@@ -2,13 +2,30 @@ import React from 'react';
 import Canvas from "./Canvas";
 import Trie from "./Trie";
 
-import { isColor, divideByTokens } from "./Stuff";
+import { isColor, isDash, divideByTokens } from "./Stuff";
 
 import "./styles.css"
 import "./button.css"
 
+const placeholderText = [
+  "   Draw trie\n" +
+  "[opt] means optional\n\n" +
+  "Nodes:\n" +
+  "word [color]\n\n" +
+  "Bonus:\n" +
+  "[color]\nChanges all words below with this color\n",
+
+  "   Draw graph\n" +
+  "[opt] means optional\n\n" +
+  "Nodes:\n" +
+  "u [color]\n\n" +
+  "Edges:\n" +
+  "u v [weight] [color] [dash]\n" +
+  "Bonus:\n" +
+  "[color]\nChanges all nodes below with this color\n",
+];
+
 const defaultColorNode = "#c9a9ff";
-// const defaultColorNode = "#a181d7";
 
 class App extends React.Component {
   constructor() {
@@ -54,7 +71,7 @@ class App extends React.Component {
         nodes.set(node, val);
       }
 
-      function addEdge(from, to, weight = "", color = "black") {
+      function addEdge(from, to, weight = "", color = "black", dashedLine = false) {
         // Adds the edges to a set to use them later
         if (!nodes.has(from))
           addNode(from, {});
@@ -62,14 +79,17 @@ class App extends React.Component {
           addNode(to, {});
 
         if (!edges.has({ from, to })) {
-          edges.set({ from, to }, { weight, color });
+          edges.set({ from, to }, { weight, color, dashedLine });
         } else {
-          var val = edges.get({ from, to });
+          let val = edges.get({ from, to });
           if (weight.length > 0) {
             val.weight = weight;
           }
           if (color !== "black") {
             val.color = color;
+          }
+          if (dashedLine) {
+            val.dashedLine = true;
           }
           edges.set({ from, to }, val);
         }
@@ -102,32 +122,29 @@ class App extends React.Component {
               const v = object[1];
               addEdge(u, v, "");
             }
-          } else if (object.length === 3) {
+          } else if (object.length >= 3) {
             const u = object[0];
             const v = object[1];
-            const x = object[2];
-            if (isColor(x)) {
-              // Edge u -> v with color
-              addEdge(u, v, "", x);
-            } else {
-              // Edge u -> v with weight
-              const weight = object[2];
-              addEdge(u, v, weight);
+
+            // Edge u -> v with color | weight | dash
+
+            let weight = "";
+            let color = "black";
+            let dashedLine = false;
+
+            for (let i = 2; i < object.length; i++) {
+              const x = object[i];
+              
+              if (isColor(x)) {
+                color = x;
+              } else if (isDash(x)) {
+                dashedLine = true;
+              } else {
+                weight += x + " ";
+              }
             }
-          } else if (object.length === 4) {
-            const u = object[0];
-            const v = object[1];
-            var weight = object[2];
-            var x = object[3];
-            if (isColor(weight)) {
-              [x, weight] = [weight, x];
-            } 
-            
-            if (isColor(x)) {
-              addEdge(u, v, weight, x);
-            } else {
-              console.log("wtf bro!!!");
-            }
+
+            addEdge(u, v, weight, color, dashedLine);
           }
         }
       } else {
@@ -184,24 +201,7 @@ class App extends React.Component {
   }
 
   render() {
-    const placeholderText = [
-      "   Draw trie\n" +
-      "[opt] means optional\n\n" +
-      "Nodes:\n" +
-      "word [color]\n\n" +
-      "Bonus:\n" +
-      "[color]\nChanges all words below with this color\n",
-
-      "   Draw graph\n" +
-      "[opt] means optional\n\n" +
-      "Nodes:\n" +
-      "u [color]\n\n" +
-      "Edges:\n" +
-      "u v [weight] [color]\n" +
-      "u v [color] [weight]\n\n" +
-      "Bonus:\n" +
-      "[color]\nChanges all nodes below with this color\n",
-    ];
+    const textAreaValue = placeholderText[this.state.drawGraph ? 1 : 0];
 
     return (
       <div>
@@ -224,7 +224,7 @@ class App extends React.Component {
             type="text"
             className="input"
             onChange={this.getInput.bind(this)}
-            placeholder={placeholderText[this.state.drawGraph ? 1 : 0]} />
+            placeholder={textAreaValue} />
 
           <Canvas
             nodes={this.state.nodes}

@@ -1,42 +1,38 @@
-export function length(p) {
-  return Math.sqrt(p.x * p.x + p.y * p.y);
+export function length(point) {
+  return Math.sqrt(point.x * point.x + point.y * point.y);
 }
 
-export function dif(a, b) {
-  return { x: a.x - b.x, y: a.y - b.y };
+export function dif(pointA, pointB) {
+  return { x: pointA.x - pointB.x, y: pointA.y - pointB.y };
 }
 
-export function sum(a, b) {
-  return { x: a.x + b.x, y: a.y + b.y };
+export function sum(pointA, pointB) {
+  return { x: pointA.x + pointB.x, y: pointA.y + pointB.y };
 }
 
-export function mul(a, k) {
-  return { x: a.x * k, y: a.y * k };
+export function mul(point, k) {
+  return { x: point.x * k, y: point.y * k };
 }
 
-export function divide(a, k) {
-  return { x: a.x / k, y: a.y / k };
+export function divide(point, k) {
+  return { x: point.x / k, y: point.y / k };
 }
 
-export function unit(p) {
-  return { x: p.x / length(p), y: p.y / length(p) };
+export function unit(point) {
+  return { x: point.x / length(point), y: point.y / length(point) };
 }
 
-export function perp(p) {
-  return { x: -p.y, y: p.x };
+export function perp(point) {
+  return { x: -point.y, y: point.x };
 }
 
-export function rotate(p, angle) {
+export function rotate(point, angle) {
   return {
-    x: p.x * Math.cos(angle) - p.y * Math.sin(angle),
-    y: p.x * Math.sin(angle) + p.y * Math.cos(angle)
+    x: point.x * Math.cos(angle) - point.y * Math.sin(angle),
+    y: point.x * Math.sin(angle) + point.y * Math.cos(angle)
   };
 }
 
-export function projectionOnCircle(c, r, p) {
-  return sum(c, mul(unit(dif(p, c)), r));
+export function projectionOnCircle(center, radius, point) {
+  return sum(center, mul(unit(dif(point, center)), radius));
 }
-
-// Pt projection(Pt p) {
-//   return o + (p - o).unit() * r;
-// }

@@ -3,38 +3,36 @@ import { NaturalCurve } from "react-svg-curve"
 import { length, dif, sum, mul, divide, unit, perp, rotate, projectionOnCircle } from "./Geometry";
 
 export function Edge(props) {
-  const { delta, from, to, weight, color, directed } = props;
+  const { delta, from, to, weight, color, directed, dashedLine } = props;
+
+  const radius = 25;
 
   let bothEndpoints = (from !== undefined && to !== undefined);
-
-  let fromProjection = { x: 0, y: 0 };
-  let toProjection = { x: 0, y: 0 };
   let midPoint = { x: 0, y: 0 };
+  let fromOnCircle = { x: 0, y: 0 };
+  let toOnCircle = { x: 0, y: 0 };
 
   if (bothEndpoints) {
-    fromProjection = projectionOnCircle(from, 25, to);
-    toProjection = projectionOnCircle(to, 25, from);
-    // fromProjection = from;
-    // toProjection = to;
-
-    let half = divide(sum(fromProjection, toProjection), 2);
-    let dirHalfPerp = unit(perp(dif(fromProjection, half)))
+    let half = divide(sum(from, to), 2);
+    let dirHalfPerp = unit(perp(dif(from, half)))
     midPoint = sum(half, mul(dirHalfPerp, delta));
+
+    fromOnCircle = projectionOnCircle(from, radius, midPoint);
+    toOnCircle = projectionOnCircle(to, radius, midPoint);
   }
 
   function getArrow() {
-    let dir = unit(dif(from, to));
+    let dir = unit(dif(midPoint, toOnCircle));
 
-    let r = 25;
-
-    let p = sum(to, mul(dir, r));
-    let q = sum(to, mul(dir, r + 8));
-    let perpQ = unit(perp(dif(p, q)));
-    let perp1 = sum(q, mul(perpQ, 5));
-    let perp2 = sum(q, mul(perpQ, -5));
+    // let p = sum(toOnCircle, mul(dir, radius));
+    let start = toOnCircle;
+    let end = sum(toOnCircle, mul(dir, 10));
+    let perpQ = unit(perp(dif(start, end)));
+    let perp1 = sum(end, mul(perpQ, 5));
+    let perp2 = sum(end, mul(perpQ, -5));
 
     let str =
-      " M " + p.x + "," + p.y +
+      " M " + start.x + "," + start.y +
       " " + perp1.x + ", " + perp1.y +
       " " + perp2.x + " " + perp2.y + " z ";
     // console.log(str);
@@ -43,6 +41,7 @@ export function Edge(props) {
   }
 
   const boldEdge = (color === "black" ? 1.5 : 3);
+  const dash = dashedLine ? 5 : 0;
 
   return (
     <g>
@@ -50,12 +49,13 @@ export function Edge(props) {
         bothEndpoints &&
         <NaturalCurve
           data={[
-            [fromProjection.x, fromProjection.y],
+            [fromOnCircle.x, fromOnCircle.y],
             [midPoint.x, midPoint.y],
-            [toProjection.x, toProjection.y],
+            [toOnCircle.x, toOnCircle.y],
           ]}
           stroke={color}
           strokeWidth={boldEdge}
+          strokeDasharray={dash}
           showPoints={false} />
       }
 

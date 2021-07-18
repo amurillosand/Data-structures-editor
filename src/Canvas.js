@@ -72,7 +72,7 @@ class Canvas extends React.Component {
           );
         });
 
-        console.log("\n\n");
+        // console.log("\n\n");
 
         this.setState({
           nodesInfo: nodesInfo,
@@ -83,7 +83,9 @@ class Canvas extends React.Component {
   }
 
   render() {
-    let count = new Map();
+    let lastKey = new Map();
+    let previousKey = "";
+    let rank = 0;
 
     function getKey(from, to) {
       if (from > to) {
@@ -94,13 +96,36 @@ class Canvas extends React.Component {
         from, to
       });
     }
+
+    function leftSide(pointA, pointB) {
+      if (pointA.x === pointB.x) {
+        return pointA.y < pointB.y;
+      }
+      return pointA.x < pointB.x;
+    }
     
     return (
       <div className="scrollable-image">
         <svg className="image">
-          {
+          { 
             this.props.edges.sort((a, b) => {
               return getKey(a[0].from, a[0].to) < getKey(b[0].from, b[0].to) ? -1 : +1;
+            }).map((edge) => {
+              let currentKey = getKey(edge[0].from, edge[0].to);
+
+              if (previousKey === currentKey) {
+                rank++;
+              } else {
+                rank = 0;
+              }
+          
+              lastKey.set(currentKey, rank);
+              previousKey = currentKey;
+
+              return ([
+                ...edge, 
+                rank
+              ]);
             }).map((edge) => {
               const from = this.state.nodesInfo.find(node => {
                 return edge[0].from === node.id;
@@ -109,28 +134,32 @@ class Canvas extends React.Component {
                 return edge[0].to === node.id;
               });
         
-              const edgeToString = getKey(edge[0].from, edge[0].to);
-              if (!count.has(edgeToString)) {
-                count.set(edgeToString, 0);
-              }
+              const currentKey = getKey(edge[0].from, edge[0].to);
+              let rank = edge[2] - Math.ceil(lastKey.get(currentKey) / 2);
         
-              let delta = count.get(edgeToString);
-              let side = delta % 2 ? +1 : -1;
-              count.set(edgeToString, delta + 1);
-
               if (edge[0].from > edge[0].to) {
-                side *= -1;
+                rank *= -1;
+
+                if (from !== undefined && to !== undefined && !leftSide(to, from)) {
+                  rank *= -1;
+                }
+              } else {
+                if (from !== undefined && to !== undefined && !leftSide(from, to)) {
+                  rank *= -1;
+                }
               }
-        
+
               return ({
                 from: from,
                 to: to,
                 weight: edge[1].weight,
                 color: edge[1].color,
-                delta: side * 40 * Math.ceil(delta / 2)
+                dashedLine: edge[1].dashedLine,
+                delta: -40 * rank,
               })
             }).map((edge, key) => {
-        
+              console.log(edge);
+
               if (edge.from === edge.to) {
                 return (
                   <Loop
@@ -150,6 +179,7 @@ class Canvas extends React.Component {
                     to={edge.to}
                     weight={edge.weight}
                     color={edge.color}
+                    dashedLine={edge.dashedLine}
                     directed={this.props.directed} />
                 );
               }
@@ -157,7 +187,6 @@ class Canvas extends React.Component {
           }
 
           {this.state.printableNodes}
-
         </svg>
       </div>
     );

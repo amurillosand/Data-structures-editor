@@ -14,6 +14,10 @@ export function isColor(x) {
   return (test1 === true || test2 === true)
 }
 
+export function isDash(x) {
+  return x === "dash";
+}
+
 export function isSpace(c) {
   return (c === ' ') || (c === '\t');
 }
