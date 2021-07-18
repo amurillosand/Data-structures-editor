@@ -14,6 +14,10 @@ export function mul(a, k) {
   return { x: a.x * k, y: a.y * k };
 }
 
+export function divide(a, k) {
+  return { x: a.x / k, y: a.y / k };
+}
+
 export function unit(p) {
   return { x: p.x / length(p), y: p.y / length(p) };
 }

@@ -1,19 +1,25 @@
 import React from "react"
-import { length, dif, sum, mul, unit, perp, rotate, projectionOnCircle } from "./Geometry";
+import { NaturalCurve } from "react-svg-curve"
+import { length, dif, sum, mul, divide, unit, perp, rotate, projectionOnCircle } from "./Geometry";
 
 export function Edge(props) {
-  const { from, to, weight, color, directed } = props;
+  const { delta, from, to, weight, color, directed } = props;
 
   let bothEndpoints = (from !== undefined && to !== undefined);
 
-  let textPos = { x: 0, y: 0 };
   let fromProjection = { x: 0, y: 0 };
   let toProjection = { x: 0, y: 0 };
+  let midPoint = { x: 0, y: 0 };
+
   if (bothEndpoints) {
-    textPos.x = (from.x + to.x) / 2;
-    textPos.y = (from.y + to.y) / 2;
     fromProjection = projectionOnCircle(from, 25, to);
     toProjection = projectionOnCircle(to, 25, from);
+    // fromProjection = from;
+    // toProjection = to;
+
+    let half = divide(sum(fromProjection, toProjection), 2);
+    let dirHalfPerp = unit(perp(dif(fromProjection, half)))
+    midPoint = sum(half, mul(dirHalfPerp, delta));
   }
 
   function getArrow() {
@@ -42,14 +48,19 @@ export function Edge(props) {
     <g>
       {
         bothEndpoints &&
-        <line
-          x1={fromProjection.x} y1={fromProjection.y}
-          x2={toProjection.x} y2={toProjection.y}
+        <NaturalCurve
+          data={[
+            [fromProjection.x, fromProjection.y],
+            [midPoint.x, midPoint.y],
+            [toProjection.x, toProjection.y],
+          ]}
           stroke={color}
-          strokeWidth={boldEdge} />
+          strokeWidth={boldEdge}
+          showPoints={false} />
       }
 
-      { (bothEndpoints && directed) &&
+      {
+        (bothEndpoints && directed) &&
         <path
           d={getArrow()}
           fill={color}
@@ -59,8 +70,8 @@ export function Edge(props) {
       {
         (bothEndpoints && weight) &&
         <text
-          x={textPos.x + 10}
-          y={textPos.y + 10}
+          x={midPoint.x + 10}
+          y={midPoint.y + 10}
           fill="black" >
           {weight}
         </text>
@@ -84,14 +95,14 @@ export function Loop(props) {
   const dx = 0;
   const dy = -35;
 
-  function getArrow() {  
+  function getArrow() {
     let loopOutside = {
       x: from.x + 20,
       y: from.y + dy
     };
 
     let dir = unit(dif(loopOutside, from));
-    
+
     let p = {
       x: loopOutside.x - 5.5,
       y: loopOutside.y + 13.5
@@ -125,7 +136,8 @@ export function Loop(props) {
         />
       }
 
-      { (bothEndpoints && directed) &&
+      {
+        (bothEndpoints && directed) &&
         <path
           d={getArrow()}
           fill={color}

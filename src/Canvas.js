@@ -53,11 +53,11 @@ class Canvas extends React.Component {
           });
         }
       }
-      
+
       prettyTree({
         drawGraph: this.props.drawGraph,
         likeTree: this.props.likeTree,
-        nodes: nodesInfo, 
+        nodes: nodesInfo,
         edges: this.props.edges
       }, () => {
         let printableNodes = nodesInfo.map((node) => {
@@ -73,7 +73,7 @@ class Canvas extends React.Component {
         });
 
         console.log("\n\n");
-      
+
         this.setState({
           nodesInfo: nodesInfo,
           printableNodes: printableNodes
@@ -81,43 +81,83 @@ class Canvas extends React.Component {
       });
     }
   }
-  
+
   render() {
+    let count = new Map();
+
+    function getKey(from, to) {
+      if (from > to) {
+        [from, to] = [to, from]
+      }
+
+      return JSON.stringify({
+        from, to
+      });
+    }
+    
     return (
       <div className="scrollable-image">
         <svg className="image">
           {
-            this.props.edges.map((edge, key) => {
+            this.props.edges.sort((a, b) => {
+              return getKey(a[0].from, a[0].to) < getKey(b[0].from, b[0].to) ? -1 : +1;
+            }).map((edge) => {
               const from = this.state.nodesInfo.find(node => {
                 return edge[0].from === node.id;
               });
               const to = this.state.nodesInfo.find(node => {
                 return edge[0].to === node.id;
               });
+        
+              const edgeToString = getKey(edge[0].from, edge[0].to);
+              if (!count.has(edgeToString)) {
+                count.set(edgeToString, 0);
+              }
+        
+              let delta = count.get(edgeToString);
+              let side = delta % 2 ? +1 : -1;
+              count.set(edgeToString, delta + 1);
 
-              if (from === to) {
+              if (edge[0].from > edge[0].to) {
+                side *= -1;
+              }
+        
+              return ({
+                from: from,
+                to: to,
+                weight: edge[1].weight,
+                color: edge[1].color,
+                delta: side * 40 * Math.ceil(delta / 2)
+              })
+            }).map((edge, key) => {
+        
+              if (edge.from === edge.to) {
                 return (
-                  <Loop 
+                  <Loop
                     key={key}
-                    from={from} to={to}
-                    weight={edge[1].weight}
-                    color={edge[1].color}
+                    from={edge.from}
+                    to={edge.to}
+                    weight={edge.weight}
+                    color={edge.color}
                     directed={this.props.directed} />
                 );
               } else {
                 return (
                   <Edge
-                  key={key}
-                  from={from} to={to}
-                  weight={edge[1].weight}
-                  color={edge[1].color}
-                  directed={this.props.directed} />
+                    delta={edge.delta}
+                    key={key}
+                    from={edge.from}
+                    to={edge.to}
+                    weight={edge.weight}
+                    color={edge.color}
+                    directed={this.props.directed} />
                 );
               }
             })
           }
-          
+
           {this.state.printableNodes}
+
         </svg>
       </div>
     );
