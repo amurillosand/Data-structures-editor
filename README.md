@@ -1,4 +1,4 @@
-# Getting started with Geometry noob version
+# Getting started with graph noob version
 
 Just type what you need :)
 
