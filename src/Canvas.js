@@ -2,7 +2,7 @@ import React from "react";
 import Node from "./Node";
 import { Edge, Loop } from "./Edge";
 import { getRandom } from "./Stuff";
-import { prettyTree } from "./PrettyTree";
+import { prettyTree, getComponentFrom } from "./PrettyTree";
 
 import "./styles.css"
 
@@ -12,31 +12,54 @@ class Canvas extends React.Component {
 
     this.state = {
       nodesInfo: [],
-      printableNodes: []
+      printableNodes: [],
+      deltaX: 0,
+      deltaY: 0,
+      movedNodeId: null,
     };
   }
 
   updatePosition = (id, x, y) => {
+    let deltaX = 0;
+    let deltaY = 0;
     const nodesInfo = this.state.nodesInfo.map((node) => {
       if (node.id === id) {
-        node.x = x;
-        node.y = y;
+        deltaX = x - node.x;
+        deltaY = y - node.y;
+        if (!this.props.drag) {
+          node.x = x;
+          node.y = y;
+        }
       }
+
       return node;
     });
 
     this.setState({
-      nodesInfo: nodesInfo
+      nodesInfo: nodesInfo,
+      deltaX: deltaX,
+      deltaY: deltaY,
+      movedNodeId: id,
     });
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.props !== prevProps) {
+    let component = null;
+    if (this.state.movedNodeId !== null && this.props.drag) {
+      if (this.state.deltaX !== prevState.deltaX || this.state.deltaY !== prevState.deltaY) {
+        console.log("El nodo", this.state.movedNodeId, "se está moviendo")
+        component = getComponentFrom(this.state.movedNodeId, this.state.nodesInfo, this.props.edges);
+        console.log(component)
+      }
+    }
+
+    if (this.props !== prevProps || component !== null) {
       let nodesInfo = []
       for (const [curNode, info] of this.props.nodes) {
         let prevNode = prevState.nodesInfo.find(node => {
           return node.id === curNode;
         });
+
         if (prevNode !== undefined) {
           // just update the color
           prevNode.color = info.color;
@@ -52,6 +75,17 @@ class Canvas extends React.Component {
             label: info.label,
           });
         }
+      }
+
+      if (component !== null) {
+        nodesInfo = nodesInfo.map((node) => {
+          if (component.has(node.id)) {
+            node.x = node.x + this.state.deltaX;
+            node.y = node.y + this.state.deltaY;
+          }
+
+          return node;
+        })
       }
 
       prettyTree({
@@ -71,8 +105,6 @@ class Canvas extends React.Component {
               updatePosition={this.updatePosition} />
           );
         });
-
-        // console.log("\n\n");
 
         this.setState({
           nodesInfo: nodesInfo,
@@ -103,11 +135,11 @@ class Canvas extends React.Component {
       }
       return pointA.x < pointB.x;
     }
-    
+
     return (
       <div className="scrollable-image">
         <svg className="image">
-          { 
+          {
             this.props.edges.sort((a, b) => {
               return getKey(a[0].from, a[0].to) < getKey(b[0].from, b[0].to) ? -1 : +1;
             }).map((edge) => {
@@ -118,12 +150,12 @@ class Canvas extends React.Component {
               } else {
                 rank = 0;
               }
-          
+
               lastKey.set(currentKey, rank);
               previousKey = currentKey;
 
               return ([
-                ...edge, 
+                ...edge,
                 rank
               ]);
             }).map((edge) => {
@@ -133,10 +165,10 @@ class Canvas extends React.Component {
               const to = this.state.nodesInfo.find(node => {
                 return edge[0].to === node.id;
               });
-        
+
               const currentKey = getKey(edge[0].from, edge[0].to);
               let rank = edge[2] - Math.ceil(lastKey.get(currentKey) / 2);
-        
+
               if (edge[0].from > edge[0].to) {
                 rank *= -1;
 
@@ -158,7 +190,7 @@ class Canvas extends React.Component {
                 delta: -40 * rank,
               })
             }).map((edge, key) => {
-              console.log(edge);
+              // console.log(edge);
 
               if (edge.from === edge.to) {
                 return (

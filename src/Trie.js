@@ -34,7 +34,7 @@ export default class Trie {
   }
 
   dfs(node, label) {
-    this.addNode(node.id, {label: label, color: node.color});
+    this.addNode(node.id, { label: label, color: node.color });
     for (let [c, child] of node.children) {
       this.dfs(child, c);
       this.addEdge(node.id, child.id);

@@ -18,9 +18,9 @@
 
 .multi-button {
   display: flex;
-  width: 85%;
+  width: 100%;
   place-items: center;
-  padding: calc(var(--space));
+  padding: 0px 16px;
   /* box-shadow: var(--shadow) 4px 4px; */
 }
 
@@ -29,20 +29,18 @@
   cursor: pointer;
   position: relative;
   padding:
-    calc(var(--space) / 1.125)
-    var(--space)
-    var(--space);
+    calc(var(--space) / 1.125) var(--space) var(--space);
   border: var(--border-size) solid black;
   color: var(--color-secondary);
   background-color: var(--color-primary);
-  font-size: 1.5rem;
+  font-size: 1rem;
   font-family: var(--font-family);
   text-transform: lowercase;
   text-shadow: var(--shadow) 2px 2px;
   transition: flex-grow var(--duration) var(--ease);
 }
 
-.multi-button button + button {
+.multi-button button+button {
   border-left: var(--border-size) solid black;
   margin-left: calc(var(--border-size) * -1);
 }

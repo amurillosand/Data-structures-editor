@@ -20,7 +20,7 @@ const placeholderText = [
   "Nodes:\n" +
   "u [color]\n\n" +
   "Edges:\n" +
-  "u v [weight] [color] [dash]\n" +
+  "u v [weight] [color] [dash]\n\n" +
   "Bonus:\n" +
   "[color]\nChanges all nodes below with this color\n",
 ];
@@ -36,7 +36,8 @@ class App extends React.Component {
       edges: new Map(),
       drawGraph: true,
       directed: true,
-      likeTree: false
+      likeTree: false,
+      drag: false
     }
   }
 
@@ -94,7 +95,7 @@ class App extends React.Component {
           edges.set({ from, to }, val);
         }
       }
-     
+
       if (this.state.drawGraph === true) {
         // Add all the current objects of the graph
         for (let object of objects) {
@@ -116,7 +117,7 @@ class App extends React.Component {
             const x = object[1];
             if (isColor(x)) {
               // Node with color x
-              addNode(u, {color: x});
+              addNode(u, { color: x });
             } else {
               // Edge u -> v (depends on the flag)
               const v = object[1];
@@ -134,7 +135,7 @@ class App extends React.Component {
 
             for (let i = 2; i < object.length; i++) {
               const x = object[i];
-              
+
               if (isColor(x)) {
                 color = x;
               } else if (isDash(x)) {
@@ -196,7 +197,13 @@ class App extends React.Component {
 
   drawLikeTree(e) {
     this.setState((prevState) => {
-      return {likeTree: !prevState.likeTree}
+      return { likeTree: !prevState.likeTree }
+    });
+  }
+
+  dragAll(e) {
+    this.setState((prevState) => {
+      return { drag: !prevState.drag }
     });
   }
 
@@ -204,22 +211,26 @@ class App extends React.Component {
     const textAreaValue = placeholderText[this.state.drawGraph ? 1 : 0];
 
     return (
-      <div>
+      <div class="global-div">
         <div className="multi-button">
           <button onClick={this.toDrawButton.bind(this)}>
-            {"Drawing " + (this.state.drawGraph ? "graph" : "trie")}
-          </button>
-
-          <button onClick={this.directedEdges.bind(this)}>
-            {this.state.directed ? "Directed" : "Un-directed"}
+            {"Drawing a " + (this.state.drawGraph ? "graph" : "trie")}
           </button>
 
           <button onClick={this.drawLikeTree.bind(this)}>
-            {this.state.likeTree ? "As a tree" : "Random"}
+            {this.state.likeTree ? "ordered as a tree" : "randomly ordered"}
+          </button>
+
+          <button onClick={this.directedEdges.bind(this)}>
+            {this.state.directed ? "directed" : "un-directed"}
+          </button>
+
+          <button onClick={this.dragAll.bind(this)}>
+            {"drag " + (this.state.drag ? "all" : "a single node")}
           </button>
         </div>
 
-        <div>
+        <div class="image-wrapper">
           <textarea
             type="text"
             className="input"
@@ -229,9 +240,10 @@ class App extends React.Component {
           <Canvas
             nodes={this.state.nodes}
             edges={Array.from(this.state.edges)}
-            directed={this.state.directed} 
+            directed={this.state.directed}
             drawGraph={this.state.drawGraph}
-            likeTree={this.state.likeTree} />
+            likeTree={this.state.likeTree}
+            drag={this.state.drag} />
         </div>
       </div>
     );
