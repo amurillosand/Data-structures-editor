@@ -1,7 +1,7 @@
 import React from "react";
-import { isLight, pickTextColor, lightenColor } from "./Stuff"
+import { isLight, pickTextColor, lightenColor } from "../utils/Utils"
 
-class Node extends React.Component {
+export class Node extends React.Component {
   constructor(props) {
     super(props);
 
@@ -37,7 +37,9 @@ class Node extends React.Component {
       const nx = prev.x - (prev.offset.deltaX - deltaX);
       const ny = prev.y - (prev.offset.deltaY - deltaY);
 
-      this.props.updatePosition(this.props.id, nx, ny);
+      console.log(prev, nx, ny);
+
+      this.props.updatePosition(this.props.label, nx, ny);
 
       return {
         x: nx,
@@ -60,7 +62,7 @@ class Node extends React.Component {
   }
 
   render() {
-    var nodeColor = lightenColor(this.props.color, 40);
+    var nodeColor = this.props.color;
     var textColor = "black";
 
     if (this.props.color === "transparent") {
@@ -69,7 +71,7 @@ class Node extends React.Component {
     } else {
       if (isLight(nodeColor)) {
         // make this a little bit darker
-        nodeColor = lightenColor(this.props.color, 5);
+        nodeColor = lightenColor(this.props.color, 15);
       } else {
         // keep it light
         textColor = pickTextColor(nodeColor);
@@ -102,5 +104,3 @@ class Node extends React.Component {
     );
   }
 }
-
-export default Node;

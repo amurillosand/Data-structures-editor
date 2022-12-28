@@ -1,10 +1,8 @@
 import React from "react"
 import { NaturalCurve } from "react-svg-curve"
-import { length, dif, sum, mul, divide, unit, perp, rotate, projectionOnCircle } from "./Geometry";
+import { length, dif, sum, mul, divide, unit, perp, rotate, projectionOnCircle } from "../algorithms/Geometry";
 
-export function Edge(props) {
-  const { delta, from, to, weight, color, directed, dashedLine } = props;
-
+export function Edge({ rank, from, to, weight, color, directed, dashedLine }) {
   const radius = 25;
 
   let bothEndpoints = (from !== undefined && to !== undefined);
@@ -15,7 +13,7 @@ export function Edge(props) {
   if (bothEndpoints) {
     let half = divide(sum(from, to), 2);
     let dirHalfPerp = unit(perp(dif(from, half)))
-    midPoint = sum(half, mul(dirHalfPerp, delta));
+    midPoint = sum(half, mul(dirHalfPerp, -40 * rank));
 
     fromOnCircle = projectionOnCircle(from, radius, midPoint);
     toOnCircle = projectionOnCircle(to, radius, midPoint);
@@ -80,9 +78,7 @@ export function Edge(props) {
   );
 }
 
-export function Loop(props) {
-  const { from, to, weight, color, directed } = props;
-
+export function Loop({ from, to, weight, color, directed }) {
   let bothEndpoints = (from !== undefined && to !== undefined);
 
   let textPos = { x: 0, y: 0 };
@@ -121,6 +117,8 @@ export function Loop(props) {
 
     return str;
   }
+
+  console.log(from.x, from.y);
 
   return (
     <g>

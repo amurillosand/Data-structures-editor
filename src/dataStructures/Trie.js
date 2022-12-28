@@ -1,7 +1,8 @@
-const defaultColorNode = "#c9a9ff";
+import { DEFAULT_NODE_COLOR } from "../utils/Utils";
+import { Graph } from "./Graph";
 
 class Node {
-  constructor(id, color = defaultColorNode) {
+  constructor(id, color = DEFAULT_NODE_COLOR) {
     this.id = id;
     this.isWord = false;
     this.color = color;
@@ -13,12 +14,11 @@ class Node {
   }
 }
 
-export default class Trie {
-  constructor(addNode, addEdge) {
+export class Trie {
+  constructor() {
     this.root = new Node(-1);
     this.cnt = 0;
-    this.addNode = addNode;
-    this.addEdge = addEdge;
+    this.graph = new Graph();
   }
 
   insert(word, color) {

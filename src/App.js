@@ -1,253 +1,146 @@
-import React from 'react';
-import Canvas from "./Canvas";
-import Trie from "./Trie";
+import React, { useEffect, useState } from 'react';
+import Canvas from "./components/Canvas";
+import Text from "./drawableComponents/Text";
 
-import { isColor, isDash, divideByTokens } from "./Stuff";
+import { TextParser } from './utils/TextParser';
 
 import "./styles.css"
-import "./button.css"
+import { SPACE } from './utils/Utils';
 
-const placeholderText = [
-  "   Draw trie\n" +
-  "[opt] means optional\n\n" +
-  "Nodes:\n" +
-  "word [color]\n\n" +
-  "Bonus:\n" +
-  "[color]\nChanges all words below with this color\n",
+const placeholderText =
+  "[color]\nChanges all elements below with this color within the same data structure\n\n" +
+  "[command] Optional command, if not added that's the default behaviour or is an optional style \n\n" +
+  "-------\n\n" +
+  "Array | Vector [name]\n" +
+  "[push_back] value [color]\n" +
+  "pop_back\n\n\n" +
+  "" +
+  "Matrix [name]\n" +
+  "mat[1,1] mat[1,2] ... mat[1, c]\n" +
+  "mat[2,1] mat[2,2] ...\n...\n" +
+  "mat[r,1] [color]\n\n\n" +
+  "" +
+  "Stack | Queue [name]\n" +
+  "[push] value [color]\n" +
+  "pop\n\n\n" +
+  "" +
+  "Deque [name]\n" +
+  "[push_back] value [color]\n" +
+  "push_front value [color]\n" +
+  "pop_back\n" +
+  "pop_front\n\n\n" +
+  "" +
+  // "Graph\n" +
+  // "u [color] (add node)\n" +
+  // "u v [weight] [color] [dash] (add edge)\n\n" +
+  // "Trie\n" +
+  // "word [color]\n...\n\n" +
+  "";
 
-  "   Draw graph\n" +
-  "[opt] means optional\n\n" +
-  "Nodes:\n" +
-  "u [color]\n\n" +
-  "Edges:\n" +
-  "u v [weight] [color] [dash]\n\n" +
-  "Bonus:\n" +
-  "[color]\nChanges all nodes below with this color\n",
-];
 
-const defaultColorNode = "#c9a9ff";
+const arrayExample = "array Arreglo\n" +
+  "1 2 3\n" +
+  "blue\n" +
+  "4 5 6\n" +
+  "orange\n" +
+  "7 8 9 10 purple 11 12 red\n\n";
 
-class App extends React.Component {
-  constructor() {
-    super()
+const matrixExample = "matrix Matriz colorida\n" +
+  "1 2 3\n" +
+  "red\n" +
+  "4 5 orange 6\n" +
+  "7 purple 8 9 pink\n" +
+  "blue\n" +
+  "10 11 12\n\n";
 
-    this.state = {
-      nodes: new Map(),
-      edges: new Map(),
-      drawGraph: true,
-      directed: true,
-      likeTree: false,
-      drag: false
-    }
-  }
+const stackExample = "stack Pila\n" +
+  "push 1\n" +
+  "push 2 blue\n" +
+  "push 3\n" +
+  "4\n" +
+  "pop\n" +
+  "pop\n" +
+  "5 red\n" +
+  "orange\n" +
+  "6\n" +
+  "7\n\n";
 
-  getInput(e) {
-    this.setState((prevState) => {
-      const objects = e.target.value.split('\n').map((line) => {
-        return divideByTokens(line);
-      });
+const queueExample = "queue Cola\n" +
+  "push 1\n" +
+  "push 2 blue\n" +
+  "push 3\n" +
+  "4\n" +
+  "pop\n" +
+  "pop\n" +
+  "5 red\n" +
+  "orange\n" +
+  "6\n" +
+  "7\n\n";
 
-      let nodes = new Map();
-      let edges = new Map();
-      let currentNodeColor = defaultColorNode;
+const dequeExample =
+  "deque Cola mamalona\n" +
+  "push_back 1\n" +
+  "push_back 2\n" +
+  "push_front 3\n" +
+  "push_front 4\n" +
+  "push_front 5\n" +
+  "push_back 6\n" +
+  "push_back 7\n" +
+  "pop_front\n" +
+  "pop_back\n" +
+  "pop_front\n\n"
 
-      function addNode(node, val) {
-        if (!nodes.has(node)) {
-          if (!val.hasOwnProperty("label")) {
-            val.label = node;
-          }
-          if (!val.hasOwnProperty("color")) {
-            val.color = currentNodeColor;
-          }
-        } else {
-          const prev = nodes.get(node);
-          if (!val.hasOwnProperty("label")) {
-            val.label = prev.label;
-          }
-          if (!val.hasOwnProperty("color")) {
-            // val.color = prev.color;
-            val.color = currentNodeColor;
-          }
-        }
-        nodes.set(node, val);
-      }
+const example = arrayExample + matrixExample + stackExample + queueExample + dequeExample;
 
-      function addEdge(from, to, weight = "", color = "black", dashedLine = false) {
-        // Adds the edges to a set to use them later
-        if (!nodes.has(from))
-          addNode(from, {});
-        if (!nodes.has(to))
-          addNode(to, {});
+export default function App() {
+  const [text, setText] = useState(example);
+  const [parser, setParser] = useState(new TextParser(""));
 
-        if (!edges.has({ from, to })) {
-          edges.set({ from, to }, { weight, color, dashedLine });
-        } else {
-          let val = edges.get({ from, to });
-          if (weight.length > 0) {
-            val.weight = weight;
-          }
-          if (color !== "black") {
-            val.color = color;
-          }
-          if (dashedLine) {
-            val.dashedLine = true;
-          }
-          edges.set({ from, to }, val);
-        }
-      }
+  useEffect(() => {
+    const newParser = new TextParser(text, parser);
+    setParser(newParser);
+    // console.log(newParser.objects);
+  }, [text]);
 
-      if (this.state.drawGraph === true) {
-        // Add all the current objects of the graph
-        for (let object of objects) {
-          if (object.length === 0)
-            continue;
+  return (
+    <div class="global-div">
+      {/* <div>
+        <button>
+          {"Drawing a " + (this.state.drawGraph ? "graph" : "trie")}
+        </button>
 
-          if (object.length === 1) {
-            const x = object[0];
-            if (isColor(x)) {
-              // paint everything that's below with this color
-              currentNodeColor = x;
-            } else {
-              // Single node
-              const u = object[0];
-              addNode(u, {});
-            }
-          } else if (object.length === 2) {
-            const u = object[0];
-            const x = object[1];
-            if (isColor(x)) {
-              // Node with color x
-              addNode(u, { color: x });
-            } else {
-              // Edge u -> v (depends on the flag)
-              const v = object[1];
-              addEdge(u, v, "");
-            }
-          } else if (object.length >= 3) {
-            const u = object[0];
-            const v = object[1];
+        <button>
+          {likeTree ? "ordered as a tree" : "randomly ordered"}
+        </button>
 
-            // Edge u -> v with color | weight | dash
+        <button>
+          {directed ? "directed" : "un-directed"}
+        </button>
 
-            let weight = "";
-            let color = "black";
-            let dashedLine = false;
+        <button>
+          {"drag " + (drag ? "all" : "a single node")}
+        </button>
+      </div> */}
 
-            for (let i = 2; i < object.length; i++) {
-              const x = object[i];
+      <div class="image-wrapper">
+        <textarea
+          type="text"
+          className="input"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder={placeholderText}
+        />
 
-              if (isColor(x)) {
-                color = x;
-              } else if (isDash(x)) {
-                dashedLine = true;
-              } else {
-                weight += x + " ";
-              }
-            }
-
-            addEdge(u, v, weight, color, dashedLine);
-          }
-        }
-      } else {
-        // Draw trie D:
-        const trie = new Trie(addNode, addEdge);
-        currentNodeColor = "red";
-        for (let object of objects) {
-          if (object.length === 1) {
-            if (isColor(object[0])) {
-              // change the color of all below nodes
-              currentNodeColor = object[0];
-            } else {
-              // insert a word with the currentNodeColor
-              const word = object[0];
-              trie.insert(word, currentNodeColor);
-            }
-          } else if (object.length === 2) {
-            // insert a word with possibly a custom color
-            const word = object[0];
-            let color = currentNodeColor;
-            if (object.length === 2 && isColor(object[1])) {
-              color = object[1];
-            }
-            trie.insert(word, color);
-          }
-        }
-
-        trie.dfs(trie.root, "*");
-      }
-
-      return {
-        nodes: nodes,
-        edges: edges,
-      }
-    });
-  }
-
-  toDrawButton(e) {
-    this.setState((prev) => {
-      return { drawGraph: !prev.drawGraph }
-    });
-  }
-
-  directedEdges(e) {
-    this.setState((prev) => {
-      return { directed: !prev.directed }
-    });
-  }
-
-  drawLikeTree(e) {
-    this.setState((prevState) => {
-      return { likeTree: !prevState.likeTree }
-    });
-  }
-
-  dragAll(e) {
-    this.setState((prevState) => {
-      return { drag: !prevState.drag }
-    });
-  }
-
-  render() {
-    const textAreaValue = placeholderText[this.state.drawGraph ? 1 : 0];
-
-    return (
-      <div class="global-div">
-        <div className="multi-button">
-          <button onClick={this.toDrawButton.bind(this)}>
-            {"Drawing a " + (this.state.drawGraph ? "graph" : "trie")}
-          </button>
-
-          <button onClick={this.drawLikeTree.bind(this)}>
-            {this.state.likeTree ? "ordered as a tree" : "randomly ordered"}
-          </button>
-
-          <button onClick={this.directedEdges.bind(this)}>
-            {this.state.directed ? "directed" : "un-directed"}
-          </button>
-
-          <button onClick={this.dragAll.bind(this)}>
-            {"drag " + (this.state.drag ? "all" : "a single node")}
-          </button>
-        </div>
-
-        <div class="image-wrapper">
-          <textarea
-            type="text"
-            className="input"
-            onChange={this.getInput.bind(this)}
-            placeholder={textAreaValue} />
-
-          <Canvas
-            nodes={this.state.nodes}
-            edges={Array.from(this.state.edges)}
-            directed={this.state.directed}
-            drawGraph={this.state.drawGraph}
-            likeTree={this.state.likeTree}
-            drag={this.state.drag} />
-        </div>
+        <Canvas
+          objects={parser.objects.map(object => [
+            object.draw,
+            <Text
+              x={object.left - SPACE}
+              y={object.top - SPACE}
+              text={`${object.name}:`} />
+          ])}
+        />
       </div>
-    );
-  }
+    </div>
+  );
 }
-
-export default App;

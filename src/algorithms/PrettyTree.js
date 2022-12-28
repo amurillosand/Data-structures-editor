@@ -1,7 +1,7 @@
 // Reference of the algorithm: https://llimllib.github.io/pymag-trees/
 
-let distanceY = 80;
-let distanceX = 100;
+const distanceY = 90;
+const distanceX = 80;
 
 function findDfsTree(node, parent = undefined, depth = 0) {
   node.vis = 0;
@@ -236,12 +236,7 @@ export function getComponentFrom(startingNodeId, nodes, edges) {
   return component;
 }
 
-export function prettyTree(props, callback) {
-  const { drawGraph, likeTree, nodes, edges } = props;
-
-  distanceY = 90;
-  distanceX = 80;
-
+export function prettify(graph) {
   const byLabel = (a, b) => {
     if (a.label < b.label)
       return -1;
@@ -250,47 +245,44 @@ export function prettyTree(props, callback) {
     return 0;
   }
 
-  if (likeTree) {
-    addEdgesToTheList(nodes, edges);
+  addEdgesToTheList(graph.nodes, graph.edges);
 
-    if (!drawGraph) {
-      // Drawing a trie
-      for (let node of nodes)
-        node.children.sort(byLabel);
-    }
-
-    // find the dfs tree
-    for (let node of nodes) {
-      if (node.vis === -1)
-        findDfsTree(node);
-    }
-
-    // change the children with the dfsTreeChildren
-    for (let node of nodes) {
-      node.children = node.dfsTreeChildren;
-      delete node.dfsTreeChildren;
-    }
-
-    // algorithm of buchheim for a pretty tree
-    let sum = 0;
-    for (let node of nodes)
-      if (node.vis === 0) {
-        assign(node);
-        buchheim(node);
-
-        // define the current tree range
-        let treeRange = dfs(node);
-        let width = treeRange.mx - treeRange.mn;
-
-        // console.log(treeRange, width);
-
-        if (width >= 0) {
-          moveTree(node, sum);
-          sum += width;
-        }
-        sum += distanceX;
-      }
+  if (graph.type() === "Trie") {
+    // Drawing a trie
+    for (let node of graph.nodes)
+      node.children.sort(byLabel);
   }
 
-  callback();
+  // find the dfs tree
+  for (let node of graph.nodes) {
+    if (node.vis === -1)
+      findDfsTree(node);
+  }
+
+  // change the children with the dfsTreeChildren
+  for (let node of graph.nodes) {
+    node.children = node.dfsTreeChildren;
+    delete node.dfsTreeChildren;
+  }
+
+  // algorithm of buchheim for a pretty tree
+  let sum = 0;
+  for (let node of graph.nodes) {
+    if (node.vis === 0) {
+      assign(node);
+      buchheim(node);
+
+      // define the current tree range
+      let treeRange = dfs(node);
+      let width = treeRange.mx - treeRange.mn;
+
+      // console.log(treeRange, width);
+
+      if (width >= 0) {
+        moveTree(node, sum);
+        sum += width;
+      }
+      sum += distanceX;
+    }
+  }
 }
