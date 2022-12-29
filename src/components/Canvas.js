@@ -15,6 +15,11 @@ export default function Canvas({ objects }) {
   const [windowWidth, setWindowWidth] = useState(Number(window.innerWidth));
   const [windowHeight, setWindowHeight] = useState(Number(window.innerHeight));
 
+  const zoomInOutMouseWheel = useCallback((e) => {
+    const newzoom = zoom - e.deltaY * 0.001;
+    setZoom(Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, newzoom)));
+  }, [zoom]);
+
   const mouseDown = useCallback((e) => {
     e.stopPropagation();
     e.preventDefault();
@@ -62,6 +67,7 @@ export default function Canvas({ objects }) {
     <div className="scrollable-image">
       <svg className="image"
         viewBox={`${-left} ${-top} ${windowWidth} ${windowHeight}`}
+        onWheel={zoomInOutMouseWheel}
         onMouseDown={mouseDown}
         onMouseUp={mouseUp}
         onMouseMove={moveMouse}>
