@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import "./styles.css"
+
 import Canvas from "./components/Canvas";
 import Text from "./drawableComponents/Text";
 
 import { TextParser } from './utils/TextParser';
-
-import "./styles.css"
-import { SPACE } from './utils/Utils';
+import { TEXT_SPACE } from './utils/Utils';
 
 const placeholderText =
   "[color]\nChanges all elements below with this color within the same data structure\n\n" +
@@ -39,11 +39,13 @@ const placeholderText =
 
 
 const arrayExample = "array Arreglo\n" +
-  "1 2 3\n" +
+  "1 -20000 3\n" +
   "blue\n" +
-  "4 5 6\n" +
+  "4 -0.0005 600\n" +
   "orange\n" +
-  "7 8 9 10 purple 11 12 red\n\n";
+  "7 80 9000 10 purple 11 12 red\n" +
+  "sort\n" +
+  "reverse\n\n";
 
 const matrixExample = "matrix Matriz colorida\n" +
   "1 2 3\n" +
@@ -99,7 +101,7 @@ export default function App() {
   useEffect(() => {
     const newParser = new TextParser(text, parser);
     setParser(newParser);
-    // console.log(newParser.objects);
+    console.log(newParser.objects);
   }, [text]);
 
   return (
@@ -132,12 +134,12 @@ export default function App() {
         />
 
         <Canvas
-          objects={parser.objects.map(object => [
+          objects={parser.objects.map((object) => [
             object.draw,
-            <Text
-              x={object.left - SPACE}
-              y={object.top - SPACE}
-              text={`${object.name}:`} />
+            object.name ? <Text
+              x={object.left - TEXT_SPACE}
+              y={object.top - TEXT_SPACE}
+              text={`${object.name}:`} /> : null
           ])}
         />
       </div>

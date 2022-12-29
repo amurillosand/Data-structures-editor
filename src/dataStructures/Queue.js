@@ -4,8 +4,7 @@ import { Vector } from "./Vector";
 
 export class Queue extends Vector {
   constructor(top, name = "Queue") {
-    super(top);
-    this.name = name;
+    super(top, name);
   }
 
   push(value) {

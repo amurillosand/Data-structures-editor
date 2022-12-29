@@ -1,14 +1,14 @@
 import React from "react"
 import { BLACK } from "../utils/Utils"
 
-export default function Text({ x, y, text, color = BLACK }) {
+export default function Text({ x, y, text, fontSize = 18, color = BLACK, textAnchor = "left" }) {
   return (
     <text
       fill={color}
       x={x}
       y={y}
-      fontSize={18}
-      textAnchor="left"
+      fontSize={fontSize}
+      textAnchor={textAnchor}
       alignmentBaseline="left"
       fontFamily="Helvetica Neue" >
       {text}

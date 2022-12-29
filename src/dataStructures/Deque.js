@@ -2,9 +2,8 @@ import { Vector, Sides } from "./Vector";
 
 export class Deque extends Vector {
   constructor(top, name = "Deque") {
-    super(top);
+    super(top, name);
     this.side = Sides.BACK;
-    this.name = name;
   }
 
   push(value) {

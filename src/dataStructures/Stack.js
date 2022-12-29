@@ -5,12 +5,11 @@ import EmptyDataStructure from "../drawableComponents/EmptyDataStructure";
 
 export class Stack extends Vector {
   constructor(top, name = "Stack") {
-    super(top);
-    this.name = name;
+    super(top, name);
   }
 
   updateHeight() {
-    this.height = this.data.length * BLOCK_WITH_VERTICAL_SPACE_HEIGHT;
+    this.height = Math.max(1, this.data.length) * BLOCK_WITH_VERTICAL_SPACE_HEIGHT;
   }
 
   push(value) {

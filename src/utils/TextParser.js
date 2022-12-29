@@ -1,4 +1,4 @@
-import { isColor, divideByTokens, VERTICAL_DISTANCE, BLOCK_HEIGHT } from "./Utils";
+import { isNumeric, isColor, divideByTokens, VERTICAL_DISTANCE, BLOCK_HEIGHT } from "./Utils";
 
 import { Graph } from "../dataStructures/Graph";
 import { Trie } from "../dataStructures/Trie";
@@ -10,6 +10,7 @@ import { Deque } from "../dataStructures/Deque";
 
 import { DataStructuresIdentifier } from "./DataStructuresIdentifier";
 import { CppIdentifier } from "./CppIdentifier";
+import { Indices } from "../dataStructures/Indices";
 
 export class TextParser {
   constructor(text, oldParser = null) {
@@ -36,23 +37,28 @@ export class TextParser {
       }
 
       this.objects.push(object);
+
+      // add indices if is a vector, array or matrix
+      if (DataStructuresIdentifier.isVector(element.type) || DataStructuresIdentifier.isMatrix(element.type)) {
+        this.objects.push(new Indices(element.type, object));
+      }
     });
   }
 
   getObject(element, previousObject = null) {
-    if (DataStructuresIdentifier.isVector(element.object)) {
+    if (DataStructuresIdentifier.isVector(element.type)) {
       return this.getVector(element.lines);
-    } else if (DataStructuresIdentifier.isMatrix(element.object)) {
+    } else if (DataStructuresIdentifier.isMatrix(element.type)) {
       return this.getMatrix(element.lines);
-    } else if (DataStructuresIdentifier.isStack(element.object)) {
+    } else if (DataStructuresIdentifier.isStack(element.type)) {
       return this.getStack(element.lines);
-    } else if (DataStructuresIdentifier.isQueue(element.object)) {
+    } else if (DataStructuresIdentifier.isQueue(element.type)) {
       return this.getQueue(element.lines);
-    } else if (DataStructuresIdentifier.isDeque(element.object)) {
+    } else if (DataStructuresIdentifier.isDeque(element.type)) {
       return this.getDeque(element.lines);
-    } else if (DataStructuresIdentifier.isGraph(element.object)) {
-      return this.getGraph(element.lines, previousObject);
-    } else if (DataStructuresIdentifier.isTrie(element.object)) {
+    } else if (DataStructuresIdentifier.isGraph(element.type)) {
+      return this.getGraph(element.lines, null);
+    } else if (DataStructuresIdentifier.isTrie(element.type)) {
       return this.getTrie(element.lines);
     }
     return null;
@@ -72,7 +78,7 @@ export class TextParser {
       if (pos === lines.length || DataStructuresIdentifier.isObject(lines[pos])) {
         if (start !== -1) {
           objects.push({
-            object: divideByTokens(lines[start].toLowerCase()).shift(),
+            type: divideByTokens(lines[start].toLowerCase()).shift(),
             name: this.getNameIfAny(lines[start]),
             lines: lines.slice(start + 1, pos).map((line) => {
               return divideByTokens(line);
@@ -88,6 +94,8 @@ export class TextParser {
   getVector(lines) {
     const vector = new Vector(this.lastTop);
 
+    let sortArray = false;
+    let reverseArray = false;
     for (const line of lines) {
       if (line.length === 1 && isColor(line[0])) {
         vector.currentColor = line[0];
@@ -95,7 +103,11 @@ export class TextParser {
       }
 
       for (const element of line) {
-        if (isColor(element)) {
+        if (element === "sort") {
+          sortArray = true;
+        } else if (element === "reverse") {
+          reverseArray = !reverseArray;
+        } else if (isColor(element)) {
           // update color of the last element if any
           vector.updateLastElementColor(element);
         } else if (CppIdentifier.isPushBack(element)) {
@@ -107,6 +119,24 @@ export class TextParser {
           vector.pushBack(element);
         }
       }
+    }
+
+    if (sortArray) {
+      vector.data.sort((a, b) => {
+        if (isNumeric(a.value)) {
+          if (isNumeric(b.value)) {
+            return a.value - b.value;
+          } else {
+            return a.value < b.value;
+          }
+        } else {
+          return a.value < b.value;
+        }
+      });
+    }
+
+    if (reverseArray) {
+      vector.data.reverse();
     }
 
     return vector;

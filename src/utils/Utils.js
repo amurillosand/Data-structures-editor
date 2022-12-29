@@ -2,9 +2,10 @@ export const DEFAULT_NODE_COLOR = "#c9a9ff";
 export const BLACK = "black";
 
 export const BLOCK_HEIGHT = 45;
+export const TEXT_SPACE = 20;
 export const SPACE = 10;
 export const BLOCK_WITH_VERTICAL_SPACE_HEIGHT = BLOCK_HEIGHT + SPACE;
-export const VERTICAL_DISTANCE = 50;
+export const VERTICAL_DISTANCE = 80;
 
 export function getRandom(min, max) {
   return Math.random() * (max - min) + min;
