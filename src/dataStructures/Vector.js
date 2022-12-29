@@ -58,7 +58,11 @@ export class Vector {
   }
 
   empty() {
-    return this.data.length === 0;
+    return this.size() === 0;
+  }
+
+  size() {
+    return this.data.length;
   }
 
   get draw() {

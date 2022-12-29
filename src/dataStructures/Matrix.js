@@ -1,5 +1,5 @@
 import EmptyDataStructure from "../drawableComponents/EmptyDataStructure";
-import { DEFAULT_NODE_COLOR, BLOCK_WITH_VERTICAL_SPACE_HEIGHT, BLOCK_HEIGHT } from "../utils/Utils";
+import { DEFAULT_NODE_COLOR, BLOCK_WITH_VERTICAL_SPACE_HEIGHT } from "../utils/Utils";
 import { Vector } from "./Vector";
 
 export class Matrix {
@@ -35,6 +35,14 @@ export class Matrix {
 
   empty() {
     return this.data.length === 0;
+  }
+
+  rows() {
+    return this.data.length;
+  }
+
+  columns() {
+    return this.rows() > 0 ? this.data[0].length : 0;
   }
 
   get draw() {

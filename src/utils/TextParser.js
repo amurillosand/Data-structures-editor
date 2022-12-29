@@ -11,6 +11,7 @@ import { Deque } from "../dataStructures/Deque";
 import { DataStructuresIdentifier } from "./DataStructuresIdentifier";
 import { CppIdentifier } from "./CppIdentifier";
 import { Indices } from "../dataStructures/Indices";
+import { STLIndices } from "../dataStructures/STLIndices";
 
 export class TextParser {
   constructor(text, oldParser = null) {
@@ -39,8 +40,16 @@ export class TextParser {
       this.objects.push(object);
 
       // add indices if is a vector, array or matrix
-      if (DataStructuresIdentifier.isVector(element.type) || DataStructuresIdentifier.isMatrix(element.type)) {
+      if (DataStructuresIdentifier.isVector(element.type) ||
+        DataStructuresIdentifier.isMatrix(element.type)) {
         this.objects.push(new Indices(element.type, object));
+      }
+
+      // add top, bottom, front, back if is a stack, queue, deque
+      if (DataStructuresIdentifier.isStack(element.type) ||
+        DataStructuresIdentifier.isQueue(element.type) ||
+        DataStructuresIdentifier.isDeque(element.type)) {
+        this.objects.push(new STLIndices(element.type, object));
       }
     });
   }

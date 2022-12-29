@@ -1,6 +1,6 @@
 import { BLOCK_WITH_VERTICAL_SPACE_HEIGHT } from "../utils/Utils";
-import Rectangle from "../drawableComponents/Rectangle";
 import { Vector } from "./Vector";
+import Rectangle from "../drawableComponents/Rectangle";
 import EmptyDataStructure from "../drawableComponents/EmptyDataStructure";
 
 export class Stack extends Vector {

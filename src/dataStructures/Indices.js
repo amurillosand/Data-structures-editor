@@ -1,16 +1,15 @@
-import React from "react";
 import Text from "../drawableComponents/Text";
 import { DataStructuresIdentifier } from "../utils/DataStructuresIdentifier";
 import { BLOCK_HEIGHT, BLOCK_WITH_VERTICAL_SPACE_HEIGHT, getWidthFromText, SPACE } from "../utils/Utils";
 
 export class Indices {
-  constructor(type, object) {
+  constructor(type, dataStructure) {
     this.type = type;
-    this.object = object;
+    this.dataStructure = dataStructure;
   }
 
   drawHorizontalIndices(row) {
-    let xSum = this.object.left;
+    let xSum = this.dataStructure.left;
     let lastWidth = 0;
     const objects = [];
     row.forEach((element, index) => {
@@ -20,8 +19,8 @@ export class Indices {
       lastWidth = getWidthFromText(element.value);
       objects.push(
         <Text
-          x={xSum + lastWidth / 2 + this.object.left}
-          y={this.object.top - 5}
+          x={xSum + lastWidth / 2 + this.dataStructure.left}
+          y={this.dataStructure.top - 5}
           text={index}
           fontSize={12}
           textAnchor="middle"
@@ -36,11 +35,11 @@ export class Indices {
     for (let index = 0; index < columnLength; index++) {
       objects.push(
         <Text
-          x={this.object.left - 10}
-          y={this.object.top + index * BLOCK_WITH_VERTICAL_SPACE_HEIGHT + BLOCK_HEIGHT / 2}
+          x={this.dataStructure.left - SPACE}
+          y={this.dataStructure.top + index * BLOCK_WITH_VERTICAL_SPACE_HEIGHT + BLOCK_HEIGHT / 2}
           text={index}
           fontSize={12}
-          textAnchor="middle"
+          textAnchor="end"
         />
       );
     }
@@ -49,12 +48,12 @@ export class Indices {
 
   get draw() {
     let objects = [];
-    if (!this.object.empty()) {
+    if (!this.dataStructure.empty()) {
       if (DataStructuresIdentifier.isVector(this.type)) {
-        objects = objects.concat(this.drawHorizontalIndices(this.object.data));
+        objects = objects.concat(this.drawHorizontalIndices(this.dataStructure.data));
       } else {
-        objects = objects.concat(this.drawHorizontalIndices(this.object.data[0]));
-        objects = objects.concat(this.drawVerticallIndices(this.object.data.length));
+        objects = objects.concat(this.drawHorizontalIndices(this.dataStructure.data[0]));
+        objects = objects.concat(this.drawVerticallIndices(this.dataStructure.data.length));
       }
     }
     return objects;
