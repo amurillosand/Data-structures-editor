@@ -1,6 +1,6 @@
 import Text from "../drawableComponents/Text";
 import { DataStructuresIdentifier } from "../utils/DataStructuresIdentifier";
-import { BLOCK_HEIGHT, BLOCK_WITH_VERTICAL_SPACE_HEIGHT, getWidthFromText, SPACE } from "../utils/Utils";
+import { BLOCK_HEIGHT, BLOCK_WITH_VERTICAL_SPACE, getWidthFromText, SPACE } from "../utils/Utils";
 
 export class Indices {
   constructor(type, dataStructure) {
@@ -36,7 +36,7 @@ export class Indices {
       objects.push(
         <Text
           x={this.dataStructure.left - SPACE}
-          y={this.dataStructure.top + index * BLOCK_WITH_VERTICAL_SPACE_HEIGHT + BLOCK_HEIGHT / 2}
+          y={this.dataStructure.top + index * BLOCK_WITH_VERTICAL_SPACE + BLOCK_HEIGHT / 2}
           text={index}
           fontSize={12}
           textAnchor="end"

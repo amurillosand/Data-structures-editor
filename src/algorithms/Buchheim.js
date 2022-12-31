@@ -1,20 +1,29 @@
 // Reference of the algorithm: https://llimllib.github.io/pymag-trees/
 
-const distanceY = 90;
-const distanceX = 80;
+export const distanceY = 90;
+export const distanceX = 80;
+
+const States = {
+  UNVISITED: -1,
+  DFS_TREE: 0,
+  ASSIGN_EXTRA_VARIABLES: 1,
+  APPLY_BUCHHEIM: 2,
+  GET_TREE_RANGE: 3,
+  MOVE_TREE: 4,
+}
 
 function findDfsTree(node, parent = undefined, depth = 0) {
-  node.vis = 0;
+  node.vis = States.DFS_TREE;
   for (let child of node.children)
-    if (child.vis === -1) {
+    if (child.vis !== States.DFS_TREE) {
       node.dfsTreeChildren.push(child);
       findDfsTree(child, node, depth + 1);
     }
 }
 
-function assign(node, parent = undefined, depth = 1, pos = 1) {
-  node.vis = 1;
-  node.x = -1;
+function assign(node, parent = undefined, depth = 0, pos = 1) {
+  node.vis = States.ASSIGN_EXTRA_VARIABLES;
+  node.x = 0;
   node.y = depth * distanceY;
   node.parent = parent;
   node.thread = undefined;
@@ -24,10 +33,9 @@ function assign(node, parent = undefined, depth = 1, pos = 1) {
   node.shift = 0;
   node.leftmost = undefined;
   node.pos = pos;
-
   let i = 1;
   for (let child of node.children)
-    if (child.vis === 0) {
+    if (child.vis !== States.ASSIGN_EXTRA_VARIABLES) {
       assign(child, node, depth + 1, i++);
     }
 }
@@ -60,13 +68,13 @@ function leftmostSibling(node) {
 
 function noChildrenLeft(node) {
   for (let child of node.children)
-    if (child.vis === 1)
+    if (child.vis === States.ASSIGN_EXTRA_VARIABLES)
       return false;
   return true;
 }
 
 function buchheim(node) {
-  node.vis = 2;
+  node.vis = States.APPLY_BUCHHEIM;
   if (noChildrenLeft(node)) {
     if (leftmostSibling(node)) {
       node.x = leftBrother(node).x + distanceX;
@@ -76,12 +84,11 @@ function buchheim(node) {
   } else {
     let defaultAncestor = node.children[0];
     for (let child of node.children)
-      if (child.vis === 1) {
+      if (child.vis !== States.APPLY_BUCHHEIM) {
         buchheim(child);
         defaultAncestor = apportion(child, defaultAncestor);
       }
     executeShifts(node);
-
     const mid = (node.children[0].x + node.children[node.children.length - 1].x) / 2;
     const bro = leftBrother(node);
     if (bro) {
@@ -167,9 +174,9 @@ function ancestor(vil, node, defaultAncestor) {
   return isChild ? vil.ancestor : defaultAncestor;
 }
 
-function dfs(node, m = distanceX, depth = 1) {
+function getTreeRange(node, m = distanceX, depth = 1) {
   node.x += m;
-  node.vis = 3;
+  node.vis = States.GET_TREE_RANGE;
 
   let treeRange = {
     mn: node.x,
@@ -177,8 +184,8 @@ function dfs(node, m = distanceX, depth = 1) {
   };
 
   for (let child of node.children)
-    if (child.vis === 2) {
-      let childTreeRange = dfs(child, m + node.offset, depth + 1);
+    if (child.vis !== States.GET_TREE_RANGE) {
+      let childTreeRange = getTreeRange(child, m + node.offset, depth + 1);
       treeRange.mn = Math.min(treeRange.mn, childTreeRange.mn);
       treeRange.mx = Math.max(treeRange.mx, childTreeRange.mx);
     }
@@ -189,51 +196,11 @@ function dfs(node, m = distanceX, depth = 1) {
 
 function moveTree(node, mn) {
   node.x += mn;
-  node.vis = 4;
+  node.vis = States.MOVE_TREE;
   for (let child of node.children)
-    if (child.vis === 3) {
+    if (child.vis !== States.MOVE_TREE) {
       moveTree(child, mn);
     }
-}
-
-function addEdgesToTheList(nodes, edges) {
-  for (let node of nodes) {
-    node.children = [];
-    node.dfsTreeChildren = [];
-    node.vis = -1;
-  }
-
-  // add edges to the tree
-  for (let edge of edges) {
-    const node = nodes.find(node => {
-      return node.id === edge[0].from;
-    });
-    const child = nodes.find(node => {
-      return node.id === edge[0].to;
-    });
-    node.children.push(child);
-    child.children.push(node);
-  }
-}
-
-export function getComponentFrom(startingNodeId, nodes, edges) {
-  addEdgesToTheList(nodes, edges);
-
-  let component = new Set();
-
-  function dfs(node) {
-    component.add(node.id);
-    node.vis = 1;
-    for (let child of node.children)
-      if (child.vis === -1) {
-        dfs(child);
-      }
-  }
-
-  let startingNode = nodes.find((node) => node.id === startingNodeId);
-  dfs(startingNode);
-
-  return component;
 }
 
 export function prettify(graph) {
@@ -245,44 +212,76 @@ export function prettify(graph) {
     return 0;
   }
 
-  addEdgesToTheList(graph.nodes, graph.edges);
+  // let tmpNodes = [];
+  for (let [node, values] of graph.nodes) {
+    // let index = tmpNodes.push({
+    //   label: values.label,
+    // });
+    graph.nodes.set(node, {
+      ...values,
+      children: [],
+      dfsTreeChildren: [],
+      vis: States.UNVISITED,
+    });
+  }
 
-  if (graph.type() === "Trie") {
-    // Drawing a trie
-    for (let node of graph.nodes)
-      node.children.sort(byLabel);
+  // add edges to the tree
+  for (let [edge, values] of graph.edges) {
+    const fromNode = graph.nodes.get(edge.from);
+    const toNode = graph.nodes.get(edge.to);
+    fromNode.children.push(toNode);
+    toNode.children.push(fromNode);
   }
 
   // find the dfs tree
-  for (let node of graph.nodes) {
-    if (node.vis === -1)
-      findDfsTree(node);
+  for (let [node, nodeData] of graph.nodes) {
+    if (nodeData.vis === States.UNVISITED)
+      findDfsTree(nodeData);
   }
 
   // change the children with the dfsTreeChildren
-  for (let node of graph.nodes) {
-    node.children = node.dfsTreeChildren;
-    delete node.dfsTreeChildren;
+  for (let [node, nodeData] of graph.nodes) {
+    nodeData.children = nodeData.dfsTreeChildren;
+    delete nodeData.dfsTreeChildren;
   }
 
   // algorithm of buchheim for a pretty tree
   let sum = 0;
-  for (let node of graph.nodes) {
-    if (node.vis === 0) {
-      assign(node);
-      buchheim(node);
+  for (let [node, nodeData] of graph.nodes) {
+    if (nodeData.vis === States.DFS_TREE) {
+      assign(nodeData);
+      buchheim(nodeData);
 
       // define the current tree range
-      let treeRange = dfs(node);
+      let treeRange = getTreeRange(nodeData);
       let width = treeRange.mx - treeRange.mn;
-
       // console.log(treeRange, width);
 
       if (width >= 0) {
-        moveTree(node, sum);
+        moveTree(nodeData, sum);
         sum += width;
       }
       sum += distanceX;
     }
   }
 }
+
+// export function getComponentFrom(startingNodeId, nodes, edges) {
+//   addEdgesToTheList(nodes, edges);
+
+//   let component = new Set();
+
+//   function dfs(node) {
+//     component.add(node.id);
+//     node.vis = 1;
+//     for (let child of node.children)
+//       if (child.vis === -1) {
+//         dfs(child);
+//       }
+//   }
+
+//   let startingNode = nodes.find((node) => node.id === startingNodeId);
+//   dfs(startingNode);
+
+//   return component;
+// }

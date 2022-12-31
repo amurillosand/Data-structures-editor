@@ -2,34 +2,23 @@ import { DEFAULT_NODE_COLOR, BLACK } from "../utils/Utils";
 import { getRandom } from "../utils/Utils";
 import { Loop, Edge } from "../drawableComponents/Edge";
 import { Node } from "../drawableComponents/Node";
+import { prettify } from "../algorithms/Buchheim";
 
 export class Graph {
-  constructor(directed = true, previousGraph = null) {
-    this.currentNodeColor = DEFAULT_NODE_COLOR;
+  constructor(top, directed = true, previousGraph = null) {
+    this.top = top;
+    this.currentColor = DEFAULT_NODE_COLOR;
     this.nodes = new Map();
     this.edges = new Map();
     this.directed = directed;
     this.previousGraph = previousGraph;
   }
 
-  addNode(node, newProperties) {
-    if (!this.hasNode(node)) {
-      if (!newProperties.hasOwnProperty("label")) {
-        newProperties.label = node;
-      }
-      if (!newProperties.hasOwnProperty("color")) {
-        newProperties.color = this.currentNodeColor;
-      }
-    } else {
-      const prev = this.getNode(node);
-      if (!newProperties.hasOwnProperty("label")) {
-        newProperties.label = prev.label;
-      }
-      if (!newProperties.hasOwnProperty("color")) {
-        newProperties.color = this.currentNodeColor;
-      }
-    }
-    this.nodes.set(node, newProperties);
+  addNode(nodeId, color = null, label = null) {
+    this.nodes.set(nodeId, {
+      color: color ?? this.currentColor,
+      label: label ?? nodeId,
+    });
   }
 
   hasNode(node) {
@@ -43,9 +32,9 @@ export class Graph {
   addEdge(from, to, weight = "", color = BLACK, dashedLine = false) {
     // Adds the edges to a set to use them later
     if (!this.hasNode(from))
-      this.addNode(from, {});
+      this.addNode(from);
     if (!this.hasNode(to))
-      this.addNode(to, {});
+      this.addNode(to);
 
     if (!this.edges.has({ from, to })) {
       this.edges.set({ from, to }, { weight, color, dashedLine });
@@ -73,17 +62,25 @@ export class Graph {
     });
   }
 
-  // updatePosition
+  arrangeAsTree() {
+    prettify(this);
+
+    for (let [node, values] of this.nodes) {
+      this.nodes.set(node, {
+        ...values,
+        y: values.y + this.top,
+      });
+    }
+  }
 
   get drawableNodes() {
     const drawableNodes = [];
     this.nodes.forEach((properties, node) => {
-      const previousNode = this.previousGraph.getNode(node);
-
-      if (previousNode) {
+      if (this.previousGraph) {
+        const previousNode = this.previousGraph.getNode(node);
         properties.x = previousNode.x;
         properties.y = previousNode.y;
-      } else {
+      } else if (!properties.hasOwnProperty('x') && !properties.hasOwnProperty('y')) {
         // create a completely new node
         properties.x = getRandom(25, 800);
         properties.y = getRandom(25, 600);
@@ -96,14 +93,6 @@ export class Graph {
           y={properties.y}
           color={properties.color}
           label={properties.label}
-          updatePosition={
-            (label, x, y) => {
-              const node = this.getNode(label);
-              if (node) {
-                this.nodes.set(label, { ...node, x, y });
-              }
-            }
-          }
         />
       );
     });
@@ -153,7 +142,6 @@ export class Graph {
   }
 
   get draw() {
-    // prettify(this);
     return [...this.drawableEdges, ...this.drawableNodes];
   }
 }

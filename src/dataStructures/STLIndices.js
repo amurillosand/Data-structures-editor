@@ -1,6 +1,8 @@
 import Text from "../drawableComponents/Text";
 import { DataStructuresIdentifier } from "../utils/DataStructuresIdentifier";
-import { BLOCK_HEIGHT, BLOCK_WITH_VERTICAL_SPACE_HEIGHT, getWidthFromText, SPACE } from "../utils/Utils";
+import { BLOCK_HEIGHT, BLOCK_WITH_VERTICAL_SPACE, getWidthFromText, SPACE } from "../utils/Utils";
+
+const FONT_SIZE = 12;
 
 export class STLIndices {
   constructor(type, dataStructure) {
@@ -20,7 +22,7 @@ export class STLIndices {
         x={xSum + currentWidth / 2 + this.dataStructure.left}
         y={this.dataStructure.top - 5}
         text={text}
-        fontSize={12}
+        fontSize={FONT_SIZE}
         textAnchor="middle" />
     );
   }
@@ -29,9 +31,9 @@ export class STLIndices {
     return (
       <Text
         x={this.dataStructure.left - SPACE}
-        y={this.dataStructure.top + index * BLOCK_WITH_VERTICAL_SPACE_HEIGHT + BLOCK_HEIGHT / 2}
+        y={this.dataStructure.top + index * BLOCK_WITH_VERTICAL_SPACE + BLOCK_HEIGHT / 2}
         text={text}
-        fontSize={12}
+        fontSize={FONT_SIZE}
         textAnchor="end" />
     );
   }
@@ -46,6 +48,20 @@ export class STLIndices {
           objects = [
             this.drawLeft(0, "top"),
             this.drawLeft(this.dataStructure.size() - 1, "bottom"),
+          ];
+        }
+      } else if (DataStructuresIdentifier.isHeap(this.type)) {
+        // this relies on the graph has been drawn before
+        const topNode = this.dataStructure.topNode();
+        if (topNode) {
+          objects = [
+            <Text
+              x={topNode.x}
+              y={topNode.y - BLOCK_HEIGHT / 2 - SPACE}
+              text="top"
+              fontSize={FONT_SIZE}
+              textAnchor="middle"
+            />
           ];
         }
       } else {

@@ -1,5 +1,5 @@
 import EmptyDataStructure from "../drawableComponents/EmptyDataStructure";
-import { DEFAULT_NODE_COLOR, BLOCK_WITH_VERTICAL_SPACE_HEIGHT } from "../utils/Utils";
+import { DEFAULT_NODE_COLOR, BLOCK_WITH_VERTICAL_SPACE } from "../utils/Utils";
 import { Vector } from "./Vector";
 
 export class Matrix {
@@ -14,7 +14,7 @@ export class Matrix {
   }
 
   addRow() {
-    this.height += BLOCK_WITH_VERTICAL_SPACE_HEIGHT;
+    this.height += BLOCK_WITH_VERTICAL_SPACE;
     this.data.push([]);
   }
 
@@ -57,7 +57,7 @@ export class Matrix {
 
     let objects = [];
     this.data.forEach((row, rowIndex) => {
-      const rowVector = new Vector(rowIndex * BLOCK_WITH_VERTICAL_SPACE_HEIGHT + this.top);
+      const rowVector = new Vector(rowIndex * BLOCK_WITH_VERTICAL_SPACE + this.top);
       row.forEach((element, columnIndex) => {
         rowVector.pushBack(element.value, element.color);
       });

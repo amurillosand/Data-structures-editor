@@ -92,7 +92,19 @@ const dequeExample =
   "pop_back\n" +
   "pop_front\n\n"
 
-const example = arrayExample + matrixExample + stackExample + queueExample + dequeExample;
+const heapExample =
+  "priority_queue\n" +
+  "min\n" +
+  "push 1\n" +
+  "push 5 purple\n" +
+  "3 6\n" +
+  "orange\n" +
+  "4 blue\n" +
+  "100 red\n" +
+  "200 500\n" +
+  "pop\n\n";
+
+const example = arrayExample + matrixExample + stackExample + queueExample + dequeExample + heapExample;
 
 export default function App() {
   const [text, setText] = useState(example);
@@ -101,7 +113,7 @@ export default function App() {
   useEffect(() => {
     const newParser = new TextParser(text, parser);
     setParser(newParser);
-    console.log(newParser.objects);
+    // console.log(newParser.objects);
   }, [text]);
 
   return (

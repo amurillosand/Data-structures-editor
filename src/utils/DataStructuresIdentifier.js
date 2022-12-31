@@ -19,6 +19,10 @@ export class DataStructuresIdentifier {
     return line.startsWith("deque");
   }
 
+  static isHeap(line) {
+    return line.startsWith("priority_queue") || line.startsWith("heap");
+  }
+
   static isGraph(line) {
     return line.startsWith("graph");
   }
@@ -31,7 +35,8 @@ export class DataStructuresIdentifier {
   static isObject(line) {
     line = line.toLowerCase();
     return this.isVector(line) || this.isMatrix(line) ||
-      this.isStack(line) || this.isQueue(line) || this.isDeque(line) ||
+      this.isStack(line) || this.isQueue(line) ||
+      this.isDeque(line) || this.isHeap(line) ||
       this.isGraph(line) || this.isTrie(line);
   }
 }

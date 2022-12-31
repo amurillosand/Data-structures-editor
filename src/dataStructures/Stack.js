@@ -1,4 +1,4 @@
-import { BLOCK_WITH_VERTICAL_SPACE_HEIGHT } from "../utils/Utils";
+import { BLOCK_WITH_VERTICAL_SPACE } from "../utils/Utils";
 import { Vector } from "./Vector";
 import Rectangle from "../drawableComponents/Rectangle";
 import EmptyDataStructure from "../drawableComponents/EmptyDataStructure";
@@ -9,7 +9,7 @@ export class Stack extends Vector {
   }
 
   updateHeight() {
-    this.height = Math.max(1, this.data.length) * BLOCK_WITH_VERTICAL_SPACE_HEIGHT;
+    this.height = Math.max(1, this.data.length) * BLOCK_WITH_VERTICAL_SPACE;
   }
 
   push(value) {
@@ -36,7 +36,7 @@ export class Stack extends Vector {
       return (
         <Rectangle
           x={this.left}
-          y={this.top + (this.data.length - 1 - index) * BLOCK_WITH_VERTICAL_SPACE_HEIGHT}
+          y={this.top + (this.data.length - 1 - index) * BLOCK_WITH_VERTICAL_SPACE}
           value={element.value}
           color={element.color}
           filled={true}

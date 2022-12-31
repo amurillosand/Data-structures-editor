@@ -1,4 +1,5 @@
-import { isNumeric, isColor, divideByTokens, VERTICAL_DISTANCE, BLOCK_HEIGHT } from "./Utils";
+import { isColor, divideByTokens, isSmaller } from "./Utils";
+import { VERTICAL_DISTANCE, BLOCK_HEIGHT } from "./Utils"
 
 import { Graph } from "../dataStructures/Graph";
 import { Trie } from "../dataStructures/Trie";
@@ -7,11 +8,13 @@ import { Matrix } from "../dataStructures/Matrix";
 import { Stack } from "../dataStructures/Stack";
 import { Queue } from "../dataStructures/Queue";
 import { Deque } from "../dataStructures/Deque";
+import { Heap, HeapType } from "../dataStructures/Heap";
+
+import { Indices } from "../dataStructures/Indices";
+import { STLIndices } from "../dataStructures/STLIndices";
 
 import { DataStructuresIdentifier } from "./DataStructuresIdentifier";
 import { CppIdentifier } from "./CppIdentifier";
-import { Indices } from "../dataStructures/Indices";
-import { STLIndices } from "../dataStructures/STLIndices";
 
 export class TextParser {
   constructor(text, oldParser = null) {
@@ -48,7 +51,8 @@ export class TextParser {
       // add top, bottom, front, back if is a stack, queue, deque
       if (DataStructuresIdentifier.isStack(element.type) ||
         DataStructuresIdentifier.isQueue(element.type) ||
-        DataStructuresIdentifier.isDeque(element.type)) {
+        DataStructuresIdentifier.isDeque(element.type) ||
+        DataStructuresIdentifier.isHeap(element.type)) {
         this.objects.push(new STLIndices(element.type, object));
       }
     });
@@ -65,6 +69,8 @@ export class TextParser {
       return this.getQueue(element.lines);
     } else if (DataStructuresIdentifier.isDeque(element.type)) {
       return this.getDeque(element.lines);
+    } else if (DataStructuresIdentifier.isHeap(element.type)) {
+      return this.getHeap(element.lines);
     } else if (DataStructuresIdentifier.isGraph(element.type)) {
       return this.getGraph(element.lines, null);
     } else if (DataStructuresIdentifier.isTrie(element.type)) {
@@ -131,17 +137,7 @@ export class TextParser {
     }
 
     if (sortArray) {
-      vector.data.sort((a, b) => {
-        if (isNumeric(a.value)) {
-          if (isNumeric(b.value)) {
-            return a.value - b.value;
-          } else {
-            return a.value < b.value;
-          }
-        } else {
-          return a.value < b.value;
-        }
-      });
+      vector.data.sort((a, b) => isSmaller(a.value, b.value));
     }
 
     if (reverseArray) {
@@ -233,6 +229,8 @@ export class TextParser {
       }
     }
 
+    stack.updateHeight();
+
     return stack;
   }
 
@@ -264,6 +262,39 @@ export class TextParser {
     }
 
     return deque;
+  }
+
+  getHeap(lines) {
+    const heap = new Heap(this.lastTop);
+
+    for (const line of lines) {
+      if (line.length === 1 && isColor(line[0])) {
+        heap.currentColor = line[0];
+        continue;
+      }
+
+      for (const element of line) {
+        if (isColor(element)) {
+          // update color of the last element if any
+          heap.updateLastElementColor(element);
+        } else if (CppIdentifier.isPop(element)) {
+          heap.pop();
+        } else if (CppIdentifier.isPush(element)) {
+          // ignore this word :p
+          continue;
+        } else if (CppIdentifier.isMax(element)) {
+          heap.heapType = HeapType.MAX;
+        } else if (CppIdentifier.isMin(element)) {
+          heap.heapType = HeapType.MIN;
+        } else {
+          heap.push(element);
+        }
+      }
+    }
+
+    heap.updateHeight();
+
+    return heap;
   }
 
   // getGraph(lines, previousGraph) {

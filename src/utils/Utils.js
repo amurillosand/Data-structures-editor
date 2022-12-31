@@ -1,10 +1,10 @@
 export const DEFAULT_NODE_COLOR = "#c9a9ff";
 export const BLACK = "black";
 
-export const BLOCK_HEIGHT = 45;
+export const BLOCK_HEIGHT = 50;
 export const TEXT_SPACE = 20;
 export const SPACE = 10;
-export const BLOCK_WITH_VERTICAL_SPACE_HEIGHT = BLOCK_HEIGHT + SPACE;
+export const BLOCK_WITH_VERTICAL_SPACE = BLOCK_HEIGHT + SPACE;
 export const VERTICAL_DISTANCE = 80;
 
 export function getRandom(min, max) {
@@ -53,8 +53,8 @@ export function divideByTokens(str) {
   return result;
 }
 
-export function isLight(col) {
-  let cur = col.charAt(0) === '#' ? col.substring(1, 7) : col;
+export function isLight(color) {
+  let cur = color.charAt(0) === '#' ? color.substring(1, 7) : color;
   let r = parseInt(cur.substring(0, 2), 16); // hexToR
   let g = parseInt(cur.substring(2, 4), 16); // hexToG
   let b = parseInt(cur.substring(4, 6), 16); // hexToB
@@ -108,5 +108,12 @@ export function lightenColor(col, amt) {
 }
 
 export function getWidthFromText(text) {
-  return Math.max(BLOCK_HEIGHT, text.length * 15);
+  return Math.max(BLOCK_HEIGHT, text.length * 12);
+}
+
+export function isSmaller(a, b) {
+  if (isNumeric(a) && isNumeric(b)) {
+    return a - b;
+  }
+  return a < b ? -1 : +1;
 }

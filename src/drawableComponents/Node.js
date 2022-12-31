@@ -37,8 +37,6 @@ export class Node extends React.Component {
       const nx = prev.x - (prev.offset.deltaX - deltaX);
       const ny = prev.y - (prev.offset.deltaY - deltaY);
 
-      console.log(prev, nx, ny);
-
       this.props.updatePosition(this.props.label, nx, ny);
 
       return {
@@ -65,10 +63,7 @@ export class Node extends React.Component {
     var nodeColor = this.props.color;
     var textColor = "black";
 
-    if (this.props.color === "transparent") {
-      nodeColor = this.props.color;
-      textColor = "black";
-    } else {
+    if (this.props.color !== "transparent") {
       if (isLight(nodeColor)) {
         // make this a little bit darker
         nodeColor = lightenColor(this.props.color, 15);
@@ -84,11 +79,12 @@ export class Node extends React.Component {
           cx={this.state.x}
           cy={this.state.y}
           r={25}
-          onPointerDown={this.handlePointerDown.bind(this)}
-          onPointerUp={this.handlePointerUp.bind(this)}
-          onPointerMove={this.handlePointerMove.bind(this)}
+          // onPointerDown={this.handlePointerDown.bind(this)}
+          // onPointerUp={this.handlePointerUp.bind(this)}
+          // onPointerMove={this.handlePointerMove.bind(this)}
           fill={nodeColor}
-          stroke="black" />
+        // stroke="black" 
+        />
 
         <text
           fill={textColor}

@@ -26,4 +26,12 @@ export class CppIdentifier {
   static isTop(line) {
     return line === "top";
   }
+
+  static isMin(line) {
+    return line === "min";
+  }
+
+  static isMax(line) {
+    return line === "max";
+  }
 }
