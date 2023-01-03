@@ -11,8 +11,12 @@ export function getRandom(min, max) {
   return Math.random() * (max - min) + min;
 }
 
+export function toNumber(number) {
+  return isNumeric(number) ? Number(number) : number;
+}
+
 export function isNumeric(num) {
-  return !isNaN(num)
+  return !isNaN(num);
 }
 
 export function isColor(x) {

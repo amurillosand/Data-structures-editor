@@ -104,7 +104,31 @@ const heapExample =
   "200 500\n" +
   "pop\n\n";
 
-const example = arrayExample + matrixExample + stackExample + queueExample + dequeExample + heapExample;
+const setExample =
+  "set\n" +
+  "insert 1\n" +
+  "insert 1\n" +
+  "insert 5 purple\n" +
+  "3 6\n" +
+  "orange\n" +
+  "4 blue\n" +
+  "100 red\n" +
+  "200 500\n" +
+  "erase 5\n" +
+  "erase 100\n\n";
+
+const mapExample =
+  "map\n" +
+  "insert 1 2\n" +
+  "insert 3 4\n" +
+  "5 6\n" +
+  "erase 3\n" +
+  "insert 19 perro\n" +
+  "red\n" +
+  "5 gato\n" +
+  "6 conejo\n\n";
+
+const example = arrayExample + matrixExample + stackExample + queueExample + dequeExample + heapExample + setExample + mapExample;
 
 export default function App() {
   const [text, setText] = useState(example);

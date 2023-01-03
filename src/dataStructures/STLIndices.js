@@ -64,7 +64,40 @@ export class STLIndices {
             />
           ];
         }
-      } else {
+      } else if (DataStructuresIdentifier.isSet(this.type) ||
+        DataStructuresIdentifier.isMap(this.type)) {
+        const beginNode = this.dataStructure.beginNode();
+        const endNode = this.dataStructure.endNode();
+        if (this.dataStructure.size() === 1) {
+          objects = [
+            <Text
+              x={beginNode.x}
+              y={beginNode.y - BLOCK_HEIGHT / 2 - SPACE}
+              text="begin/end"
+              fontSize={FONT_SIZE}
+              textAnchor="middle"
+            />,
+          ];
+        } else {
+          objects = [
+            <Text
+              x={beginNode.x}
+              y={beginNode.y - BLOCK_HEIGHT / 2 - SPACE}
+              text="begin"
+              fontSize={FONT_SIZE}
+              textAnchor="middle"
+            />,
+            <Text
+              x={endNode.x}
+              y={endNode.y - BLOCK_HEIGHT / 2 - SPACE}
+              text="end"
+              fontSize={FONT_SIZE}
+              textAnchor="middle"
+            />
+          ];
+        }
+      } else if (DataStructuresIdentifier.isQueue(this.type) ||
+        DataStructuresIdentifier.isDeque(this.type)) {
         if (this.dataStructure.size() === 1) {
           objects = [this.drawAbove(0, "front/back")];
         } else {

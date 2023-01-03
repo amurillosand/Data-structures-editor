@@ -1,5 +1,5 @@
 import React from "react";
-import { isLight, pickTextColor, lightenColor } from "../utils/Utils"
+import { isLight, pickTextColor, lightenColor, getWidthFromText, BLOCK_HEIGHT } from "../utils/Utils"
 
 export class Node extends React.Component {
   constructor(props) {
@@ -73,18 +73,36 @@ export class Node extends React.Component {
       }
     }
 
+    const width = getWidthFromText(this.props.label);
+    let drawCircle = true;
+    if (width > 100) {
+      drawCircle = false;
+    }
+
     return (
       <g>
-        <circle
-          cx={this.state.x}
-          cy={this.state.y}
-          r={25}
-          // onPointerDown={this.handlePointerDown.bind(this)}
-          // onPointerUp={this.handlePointerUp.bind(this)}
-          // onPointerMove={this.handlePointerMove.bind(this)}
-          fill={nodeColor}
-        // stroke="black" 
-        />
+        {
+          drawCircle ?
+            <circle
+              cx={this.state.x}
+              cy={this.state.y}
+              r={25}
+              // onPointerDown={this.handlePointerDown.bind(this)}
+              // onPointerUp={this.handlePointerUp.bind(this)}
+              // onPointerMove={this.handlePointerMove.bind(this)}
+              // stroke="black" 
+              fill={nodeColor}
+            />
+            :
+            <rect
+              x={this.state.x - width / 2}
+              y={this.state.y - BLOCK_HEIGHT / 2}
+              fill={nodeColor}
+              width={width}
+              height={BLOCK_HEIGHT}
+              rx="25"
+            />
+        }
 
         <text
           fill={textColor}

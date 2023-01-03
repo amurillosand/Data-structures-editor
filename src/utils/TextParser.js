@@ -9,12 +9,15 @@ import { Stack } from "../dataStructures/Stack";
 import { Queue } from "../dataStructures/Queue";
 import { Deque } from "../dataStructures/Deque";
 import { Heap, HeapType } from "../dataStructures/Heap";
+import { STLSet } from "../dataStructures/STLSet";
+import { STLMap } from "../dataStructures/STLMap";
 
 import { Indices } from "../dataStructures/Indices";
 import { STLIndices } from "../dataStructures/STLIndices";
 
 import { DataStructuresIdentifier } from "./DataStructuresIdentifier";
 import { CppIdentifier } from "./CppIdentifier";
+import { LastAction } from "../dataStructures/STLMap";
 
 export class TextParser {
   constructor(text, oldParser = null) {
@@ -48,11 +51,13 @@ export class TextParser {
         this.objects.push(new Indices(element.type, object));
       }
 
-      // add top, bottom, front, back if is a stack, queue, deque
+      // add top, bottom, front, back, begin, end if it is a stack, queue, deque, heap, set, map
       if (DataStructuresIdentifier.isStack(element.type) ||
         DataStructuresIdentifier.isQueue(element.type) ||
         DataStructuresIdentifier.isDeque(element.type) ||
-        DataStructuresIdentifier.isHeap(element.type)) {
+        DataStructuresIdentifier.isHeap(element.type) ||
+        DataStructuresIdentifier.isSet(element.type) ||
+        DataStructuresIdentifier.isMap(element.type)) {
         this.objects.push(new STLIndices(element.type, object));
       }
     });
@@ -71,7 +76,11 @@ export class TextParser {
       return this.getDeque(element.lines);
     } else if (DataStructuresIdentifier.isHeap(element.type)) {
       return this.getHeap(element.lines);
-    } else if (DataStructuresIdentifier.isGraph(element.type)) {
+    } else if (DataStructuresIdentifier.isSet(element.type)) {
+      return this.getSet(element.lines);
+    } if (DataStructuresIdentifier.isMap(element.type)) {
+      return this.getMap(element.lines);
+    } if (DataStructuresIdentifier.isGraph(element.type)) {
       return this.getGraph(element.lines, null);
     } else if (DataStructuresIdentifier.isTrie(element.type)) {
       return this.getTrie(element.lines);
@@ -295,6 +304,85 @@ export class TextParser {
     heap.updateHeight();
 
     return heap;
+  }
+
+  getSet(lines) {
+    const set = new STLSet(this.lastTop);
+
+    for (const line of lines) {
+      if (line.length === 1 && isColor(line[0])) {
+        set.currentColor = line[0];
+        continue;
+      }
+
+      for (const element of line) {
+        if (isColor(element)) {
+          // update color of the last element if any
+          set.updateLastElementColor(element);
+        } else if (CppIdentifier.isErase(element)) {
+          set.lastAction = LastAction.ERASE;
+        } else if (CppIdentifier.isInsert(element)) {
+          set.lastAction = LastAction.INSERT;
+        } else {
+          if (set.lastAction === LastAction.INSERT) {
+            set.insert(element);
+          } else {
+            set.erase(element);
+          }
+          // reset to set insert as default
+          set.lastAction = LastAction.INSERT;
+        }
+      }
+    }
+
+    set.updateHeight();
+
+    return set;
+  }
+
+  getMap(lines) {
+    const map = new STLMap(this.lastTop);
+
+    for (const line of lines) {
+      if (line.length === 1 && isColor(line[0])) {
+        map.currentColor = line[0];
+        continue;
+      }
+
+      let key = null;
+      let value = null;
+      for (const element of line) {
+        if (isColor(element)) {
+          // update color of the last element if any
+          map.updateLastElementColor(element);
+        } else if (CppIdentifier.isErase(element)) {
+          map.lastAction = LastAction.ERASE;
+        } else if (CppIdentifier.isInsert(element)) {
+          map.lastAction = LastAction.INSERT;
+        } else {
+          if (map.lastAction === LastAction.INSERT) {
+            if (key === null) {
+              key = element;
+            } else if (key !== null) {
+              value = element;
+              map.insert(key, value);
+              key = null;
+              value = null;
+            }
+          } else {
+            map.erase(element);
+            key = null;
+            value = null;
+          }
+          // reset to set insert as default
+          map.lastAction = LastAction.INSERT;
+        }
+      }
+    }
+
+    map.updateHeight();
+
+    return map;
   }
 
   // getGraph(lines, previousGraph) {

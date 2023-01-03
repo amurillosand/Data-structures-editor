@@ -1,7 +1,7 @@
 // Reference of the algorithm: https://llimllib.github.io/pymag-trees/
 
 export const distanceY = 90;
-export const distanceX = 80;
+export const distanceX = 120;
 
 const States = {
   UNVISITED: -1,

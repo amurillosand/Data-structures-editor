@@ -34,4 +34,20 @@ export class CppIdentifier {
   static isMax(line) {
     return line === "max";
   }
+
+  static isInsert(line) {
+    return line === "insert";
+  }
+
+  static isErase(line) {
+    return line === "erase";
+  }
+
+  static asArray(line) {
+    return line === "asArray";
+  }
+
+  static asTree(line) {
+    return line === "asTree";
+  }
 }
