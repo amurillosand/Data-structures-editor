@@ -1,8 +1,9 @@
-import RbTree from "red-black-tree-js"
-import { distanceX } from "../algorithms/Buchheim";
-import EmptyDataStructure from "../drawableComponents/EmptyDataStructure";
-import { BLOCK_HEIGHT, DEFAULT_NODE_COLOR, SPACE, toNumber } from "../utils/Utils";
+import { RedBlackTree } from "../algorithms/red-black-tree/RedBlackTree";
+import { HORIZONTAL_DISTANCE, VERTICAL_DISTANCE } from "../utils/Utils";
+import EmptyDataStructure from "../drawable-components/EmptyDataStructure";
+import { BLOCK_HEIGHT, DEFAULT_NODE_COLOR, getHash, SPACE, toNumber } from "../utils/Utils";
 import { Graph } from "./Graph";
+import { Vector } from "./Vector";
 
 export const LastAction = {
   ERASE: 0,
@@ -19,7 +20,7 @@ export class STLMap {
     this.height = BLOCK_HEIGHT;
     this.width = 0;
 
-    this.tree = new RbTree();
+    this.tree = new RedBlackTree();
     // To make sure no key is duplicated
     this.nodeKeysSet = new Set();
     this.totalNodesCount = 0;
@@ -27,23 +28,26 @@ export class STLMap {
 
     this.lastElementKey = null;
     this.lastAction = LastAction.INSERT;
+
+    this.asArray = false;
+    this.data = [];
   }
 
   updateHeight() {
-    if (this.nodeKeysSet.size <= 1) {
+    if (this.nodeKeysSet.size < 1 || this.asArray) {
       this.height = BLOCK_HEIGHT;
     } else {
       let treeHeight = Math.max(0, this.tree.findHeight(this.tree.root) - 1);
-      this.height = treeHeight * distanceX + BLOCK_HEIGHT * 2;
+      this.height = treeHeight * VERTICAL_DISTANCE + BLOCK_HEIGHT;
     }
   }
 
   updateLastElementColor(color) {
     if (this.lastElementKey) {
-      const prevValue = this.tree.find(this.lastElementKey);
+      const prev = this.tree.find(this.lastElementKey);
       this.tree.update(this.lastElementKey, {
-        ...prevValue,
-        color: color,
+        ...prev,
+        color: color
       });
     }
   }
@@ -58,10 +62,10 @@ export class STLMap {
         color: color ?? this.currentColor,
       });
     } else {
-      const prevValue = this.tree.find(key);
+      const prev = this.tree.find(key);
       this.tree.update(key, {
-        ...prevValue,
-        value: value,
+        ...prev,
+        value: value
       });
     }
     this.lastElementKey = key;
@@ -103,16 +107,24 @@ export class STLMap {
     }
   }
 
-  beginNode() {
-    const node = this.tree.minNode();
-    const nodeKey = node.value.key;
-    return this.graph.nodes.get(nodeKey);
+  begin() {
+    if (this.asArray) {
+      return null;
+    } else {
+      const node = this.tree.minNode();
+      const nodeKey = node.value.key;
+      return this.graph.nodes.get(nodeKey);
+    }
   }
 
-  endNode() {
-    const node = this.tree.maxNode();
-    const nodeKey = node.value.key;
-    return this.graph.nodes.get(nodeKey);
+  rbegin() {
+    if (this.asArray) {
+      return null;
+    } else {
+      const node = this.tree.maxNode();
+      const nodeKey = node.value.key;
+      return this.graph.nodes.get(nodeKey);
+    }
   }
 
   get draw() {
@@ -123,6 +135,15 @@ export class STLMap {
           y={this.top}
         />
       );
+    }
+
+    if (this.asArray) {
+      this.data = this.tree.toSortedArray().map(element => element.value);
+      const drawableVector = new Vector(this.top);
+      this.data.forEach((element) => {
+        drawableVector.pushBack(element.value, element.color);
+      });
+      return drawableVector.draw;
     }
 
     this.graph = new Graph(this.top + SPACE, /* directed */ false);

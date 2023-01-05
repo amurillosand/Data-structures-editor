@@ -1,7 +1,6 @@
 // Reference of the algorithm: https://llimllib.github.io/pymag-trees/
 
-export const distanceY = 90;
-export const distanceX = 120;
+import { VERTICAL_DISTANCE, HORIZONTAL_DISTANCE } from "../utils/Utils";
 
 const States = {
   UNVISITED: -1,
@@ -24,7 +23,7 @@ function findDfsTree(node, parent = undefined, depth = 0) {
 function assign(node, parent = undefined, depth = 0, pos = 1) {
   node.vis = States.ASSIGN_EXTRA_VARIABLES;
   node.x = 0;
-  node.y = depth * distanceY;
+  node.y = depth * VERTICAL_DISTANCE;
   node.parent = parent;
   node.thread = undefined;
   node.offset = 0;
@@ -77,7 +76,7 @@ function buchheim(node) {
   node.vis = States.APPLY_BUCHHEIM;
   if (noChildrenLeft(node)) {
     if (leftmostSibling(node)) {
-      node.x = leftBrother(node).x + distanceX;
+      node.x = leftBrother(node).x + HORIZONTAL_DISTANCE;
     } else {
       node.x = 0;
     }
@@ -92,7 +91,7 @@ function buchheim(node) {
     const mid = (node.children[0].x + node.children[node.children.length - 1].x) / 2;
     const bro = leftBrother(node);
     if (bro) {
-      node.x = bro.x + distanceX;
+      node.x = bro.x + HORIZONTAL_DISTANCE;
       node.offset = node.x - mid;
     } else {
       node.x = mid;
@@ -117,7 +116,7 @@ function apportion(node, defaultAncestor) {
       vol = left(vol);
       vor = right(vor);
       vor.ancestor = node;
-      let shift = (vil.x + sil) - (vir.x + sir) + distanceX;
+      let shift = (vil.x + sil) - (vir.x + sir) + HORIZONTAL_DISTANCE;
       if (shift > 0) {
         moveSubtree(ancestor(vil, node, defaultAncestor), node, shift);
         sir = sir + shift;
@@ -174,7 +173,7 @@ function ancestor(vil, node, defaultAncestor) {
   return isChild ? vil.ancestor : defaultAncestor;
 }
 
-function getTreeRange(node, m = distanceX, depth = 1) {
+function getTreeRange(node, m = HORIZONTAL_DISTANCE, depth = 1) {
   node.x += m;
   node.vis = States.GET_TREE_RANGE;
 
@@ -261,7 +260,7 @@ export function prettify(graph) {
         moveTree(nodeData, sum);
         sum += width;
       }
-      sum += distanceX;
+      sum += HORIZONTAL_DISTANCE;
     }
   }
 }

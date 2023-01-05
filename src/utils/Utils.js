@@ -2,10 +2,11 @@ export const DEFAULT_NODE_COLOR = "#c9a9ff";
 export const BLACK = "black";
 
 export const BLOCK_HEIGHT = 50;
-export const TEXT_SPACE = 20;
+export const TEXT_SPACE = 30;
 export const SPACE = 10;
 export const BLOCK_WITH_VERTICAL_SPACE = BLOCK_HEIGHT + SPACE;
-export const VERTICAL_DISTANCE = 80;
+export const VERTICAL_DISTANCE = 90;
+export const HORIZONTAL_DISTANCE = 120;
 
 export function getRandom(min, max) {
   return Math.random() * (max - min) + min;
@@ -116,8 +117,20 @@ export function getWidthFromText(text) {
 }
 
 export function isSmaller(a, b) {
-  if (isNumeric(a) && isNumeric(b)) {
-    return a - b;
+  if (isNumeric(a)) {
+    if (isNumeric(b)) {
+      return a - b;
+    } else {
+      return -1;
+    }
+  } else {
+    if (isNumeric(b)) {
+      return +1;
+    } else {
+      if (a === b) {
+        return 0;
+      }
+      return a < b ? -1 : +1;
+    }
   }
-  return a < b ? -1 : +1;
 }

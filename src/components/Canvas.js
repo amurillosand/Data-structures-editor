@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useThrottled, useEffect } from "react";
-import Rectangle from "../drawableComponents/Rectangle";
+import Rectangle from "../drawable-components/Rectangle";
 
 const MAX_ZOOM = 4;
 const MIN_ZOOM = 0.3;

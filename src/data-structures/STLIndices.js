@@ -1,4 +1,4 @@
-import Text from "../drawableComponents/Text";
+import Text from "../drawable-components/Text";
 import { DataStructuresIdentifier } from "../utils/DataStructuresIdentifier";
 import { BLOCK_HEIGHT, BLOCK_WITH_VERTICAL_SPACE, getWidthFromText, SPACE } from "../utils/Utils";
 
@@ -10,16 +10,19 @@ export class STLIndices {
     this.dataStructure = dataStructure;
   }
 
-  drawAbove(currentIndex, text) {
+  getWidthSum(currentIndex, array) {
     let xSum = this.dataStructure.left;
     for (let index = 0; index < currentIndex; index++) {
-      xSum += getWidthFromText(this.dataStructure.data[index].value) + SPACE;
+      xSum += getWidthFromText(array[index]) + SPACE;
     }
-    let currentWidth = getWidthFromText(this.dataStructure.data[currentIndex].value);
+    let currentWidth = getWidthFromText(array[currentIndex]);
+    return xSum + currentWidth / 2;
+  }
 
+  drawAbove(index, array, text) {
     return (
       <Text
-        x={xSum + currentWidth / 2 + this.dataStructure.left}
+        x={this.getWidthSum(index, array) + this.dataStructure.left}
         y={this.dataStructure.top - 5}
         text={text}
         fontSize={FONT_SIZE}
@@ -66,44 +69,53 @@ export class STLIndices {
         }
       } else if (DataStructuresIdentifier.isSet(this.type) ||
         DataStructuresIdentifier.isMap(this.type)) {
-        const beginNode = this.dataStructure.beginNode();
-        const endNode = this.dataStructure.endNode();
-        if (this.dataStructure.size() === 1) {
-          objects = [
-            <Text
-              x={beginNode.x}
-              y={beginNode.y - BLOCK_HEIGHT / 2 - SPACE}
-              text="begin/end"
-              fontSize={FONT_SIZE}
-              textAnchor="middle"
-            />,
-          ];
+        const beginNode = this.dataStructure.begin();
+        const rbeginNode = this.dataStructure.rbegin();
+
+        if (this.dataStructure.asArray) {
+          const array = this.dataStructure.data.map(element => element.value);
+          this.dataStructure.data.forEach((element, index) => {
+            objects.push(this.drawAbove(index, array, element.key));
+          });
         } else {
-          objects = [
-            <Text
-              x={beginNode.x}
-              y={beginNode.y - BLOCK_HEIGHT / 2 - SPACE}
-              text="begin"
-              fontSize={FONT_SIZE}
-              textAnchor="middle"
-            />,
-            <Text
-              x={endNode.x}
-              y={endNode.y - BLOCK_HEIGHT / 2 - SPACE}
-              text="end"
-              fontSize={FONT_SIZE}
-              textAnchor="middle"
-            />
-          ];
+          if (this.dataStructure.size() === 1) {
+            objects = [
+              <Text
+                x={beginNode.x}
+                y={beginNode.y - BLOCK_HEIGHT / 2 - SPACE}
+                text="begin/rbegin"
+                fontSize={FONT_SIZE}
+                textAnchor="middle"
+              />,
+            ];
+          } else {
+            objects = [
+              <Text
+                x={beginNode.x}
+                y={beginNode.y - BLOCK_HEIGHT / 2 - SPACE}
+                text="begin"
+                fontSize={FONT_SIZE}
+                textAnchor="middle"
+              />,
+              <Text
+                x={rbeginNode.x}
+                y={rbeginNode.y - BLOCK_HEIGHT / 2 - SPACE}
+                text="rbegin"
+                fontSize={FONT_SIZE}
+                textAnchor="middle"
+              />
+            ];
+          }
         }
       } else if (DataStructuresIdentifier.isQueue(this.type) ||
         DataStructuresIdentifier.isDeque(this.type)) {
+        const array = this.dataStructure.data.map(element => element.value);
         if (this.dataStructure.size() === 1) {
-          objects = [this.drawAbove(0, "front/back")];
+          objects = [this.drawAbove(0, array, "front/back")];
         } else {
           objects = [
-            this.drawAbove(0, "front"),
-            this.drawAbove(this.dataStructure.size() - 1, "back"),
+            this.drawAbove(0, array, "front"),
+            this.drawAbove(this.dataStructure.size() - 1, array, "back"),
           ];
         }
       }

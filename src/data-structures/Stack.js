@@ -1,7 +1,7 @@
 import { BLOCK_WITH_VERTICAL_SPACE } from "../utils/Utils";
 import { Vector } from "./Vector";
-import Rectangle from "../drawableComponents/Rectangle";
-import EmptyDataStructure from "../drawableComponents/EmptyDataStructure";
+import Rectangle from "../drawable-components/Rectangle";
+import EmptyDataStructure from "../drawable-components/EmptyDataStructure";
 
 export class Stack extends Vector {
   constructor(top, name = "Stack") {

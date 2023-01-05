@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import "./styles.css"
 
 import Canvas from "./components/Canvas";
-import Text from "./drawableComponents/Text";
+import Text from "./drawable-components/Text";
 
 import { TextParser } from './utils/TextParser';
 import { TEXT_SPACE } from './utils/Utils';
@@ -80,7 +80,7 @@ const queueExample = "queue Cola\n" +
   "7\n\n";
 
 const dequeExample =
-  "deque Cola mamalona\n" +
+  "deque Doble cola\n" +
   "push_back 1\n" +
   "push_back 2\n" +
   "push_front 3\n" +
@@ -93,7 +93,7 @@ const dequeExample =
   "pop_front\n\n"
 
 const heapExample =
-  "priority_queue\n" +
+  "priority_queue Priority_queue\n" +
   "min\n" +
   "push 1\n" +
   "push 5 purple\n" +
@@ -105,7 +105,7 @@ const heapExample =
   "pop\n\n";
 
 const setExample =
-  "set\n" +
+  "set Set\n" +
   "insert 1\n" +
   "insert 1\n" +
   "insert 5 purple\n" +
@@ -118,7 +118,7 @@ const setExample =
   "erase 100\n\n";
 
 const mapExample =
-  "map\n" +
+  "map Map\n" +
   "insert 1 2\n" +
   "insert 3 4\n" +
   "5 6\n" +
@@ -128,7 +128,18 @@ const mapExample =
   "5 gato\n" +
   "6 conejo\n\n";
 
-const example = arrayExample + matrixExample + stackExample + queueExample + dequeExample + heapExample + setExample + mapExample;
+const mapExample2 =
+  "map Map como arreglo\n" +
+  "asArray\n" +
+  "insert gato 1 blue\n" +
+  "insert perro 2 orange\n" +
+  "conejo 3\n" +
+  "pato 4\n" +
+  "red\n" +
+  "tortuga 5\n" +
+  "hamster 6\n\n";
+
+const example = arrayExample + matrixExample + stackExample + queueExample + dequeExample + heapExample + setExample + mapExample + mapExample2;
 
 export default function App() {
   const [text, setText] = useState(example);

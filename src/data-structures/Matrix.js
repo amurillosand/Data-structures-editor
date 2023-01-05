@@ -1,4 +1,4 @@
-import EmptyDataStructure from "../drawableComponents/EmptyDataStructure";
+import EmptyDataStructure from "../drawable-components/EmptyDataStructure";
 import { DEFAULT_NODE_COLOR, BLOCK_WITH_VERTICAL_SPACE } from "../utils/Utils";
 import { Vector } from "./Vector";
 
@@ -57,11 +57,11 @@ export class Matrix {
 
     let objects = [];
     this.data.forEach((row, rowIndex) => {
-      const rowVector = new Vector(rowIndex * BLOCK_WITH_VERTICAL_SPACE + this.top);
+      const drawableRowVector = new Vector(rowIndex * BLOCK_WITH_VERTICAL_SPACE + this.top);
       row.forEach((element, columnIndex) => {
-        rowVector.pushBack(element.value, element.color);
+        drawableRowVector.pushBack(element.value, element.color);
       });
-      objects = objects.concat(rowVector.draw);
+      objects = objects.concat(drawableRowVector.draw);
     });
 
     return objects;

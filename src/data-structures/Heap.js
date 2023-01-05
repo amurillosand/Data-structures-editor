@@ -1,7 +1,6 @@
-import { isSmaller, DEFAULT_NODE_COLOR, SPACE, BLOCK_HEIGHT, BLOCK_WITH_VERTICAL_SPACE } from "../utils/Utils";
+import { isSmaller, DEFAULT_NODE_COLOR, SPACE, BLOCK_HEIGHT, VERTICAL_DISTANCE } from "../utils/Utils";
 import { Graph } from "./Graph";
-import { distanceY } from "../algorithms/Buchheim";
-import EmptyDataStructure from "../drawableComponents/EmptyDataStructure";
+import EmptyDataStructure from "../drawable-components/EmptyDataStructure";
 
 export const HeapType = {
   MIN: -1,
@@ -25,8 +24,6 @@ export class Heap {
   }
 
   updateLastElementColor(color) {
-    // TODO: save the position of the node :p
-    console.log(this.lastIndex);
     if (this.lastIndex !== 0 && this.data.length) {
       this.data.at(this.lastIndex).color = color;
     }
@@ -37,7 +34,7 @@ export class Heap {
       this.height = BLOCK_HEIGHT;
     } else {
       let treeHeight = Math.floor(Math.log2(this.data.length - 1));
-      this.height = treeHeight * distanceY + BLOCK_HEIGHT;
+      this.height = treeHeight * VERTICAL_DISTANCE + BLOCK_HEIGHT;
     }
   }
 

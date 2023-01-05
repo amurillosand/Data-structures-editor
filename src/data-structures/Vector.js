@@ -1,6 +1,6 @@
 import { DEFAULT_NODE_COLOR, BLOCK_HEIGHT, SPACE, getWidthFromText } from "../utils/Utils";
-import Rectangle from "../drawableComponents/Rectangle";
-import EmptyDataStructure from "../drawableComponents/EmptyDataStructure";
+import Rectangle from "../drawable-components/Rectangle";
+import EmptyDataStructure from "../drawable-components/EmptyDataStructure";
 
 export const Sides = {
   BACK: -1,

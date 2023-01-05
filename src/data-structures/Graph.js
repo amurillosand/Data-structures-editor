@@ -1,7 +1,7 @@
 import { DEFAULT_NODE_COLOR, BLACK } from "../utils/Utils";
 import { getRandom } from "../utils/Utils";
-import { Loop, Edge } from "../drawableComponents/Edge";
-import { Node } from "../drawableComponents/Node";
+import { Loop, Edge } from "../drawable-components/Edge";
+import { Node } from "../drawable-components/Node";
 import { prettify } from "../algorithms/Buchheim";
 
 export class Graph {

@@ -1,23 +1,23 @@
 import { isColor, divideByTokens, isSmaller } from "./Utils";
 import { VERTICAL_DISTANCE, BLOCK_HEIGHT } from "./Utils"
 
-import { Graph } from "../dataStructures/Graph";
-import { Trie } from "../dataStructures/Trie";
-import { Sides, Vector } from "../dataStructures/Vector";
-import { Matrix } from "../dataStructures/Matrix";
-import { Stack } from "../dataStructures/Stack";
-import { Queue } from "../dataStructures/Queue";
-import { Deque } from "../dataStructures/Deque";
-import { Heap, HeapType } from "../dataStructures/Heap";
-import { STLSet } from "../dataStructures/STLSet";
-import { STLMap } from "../dataStructures/STLMap";
+import { Graph } from "../data-structures/Graph";
+import { Trie } from "../data-structures/Trie";
+import { Sides, Vector } from "../data-structures/Vector";
+import { Matrix } from "../data-structures/Matrix";
+import { Stack } from "../data-structures/Stack";
+import { Queue } from "../data-structures/Queue";
+import { Deque } from "../data-structures/Deque";
+import { Heap, HeapType } from "../data-structures/Heap";
+import { STLSet } from "../data-structures/STLSet";
+import { STLMap } from "../data-structures/STLMap";
 
-import { Indices } from "../dataStructures/Indices";
-import { STLIndices } from "../dataStructures/STLIndices";
+import { Indices } from "../data-structures/Indices";
+import { STLIndices } from "../data-structures/STLIndices";
 
 import { DataStructuresIdentifier } from "./DataStructuresIdentifier";
 import { CppIdentifier } from "./CppIdentifier";
-import { LastAction } from "../dataStructures/STLMap";
+import { LastAction } from "../data-structures/STLMap";
 
 export class TextParser {
   constructor(text, oldParser = null) {
@@ -329,7 +329,7 @@ export class TextParser {
           } else {
             set.erase(element);
           }
-          // reset to set insert as default
+          // reset set to insert as default
           set.lastAction = LastAction.INSERT;
         }
       }
@@ -359,6 +359,10 @@ export class TextParser {
           map.lastAction = LastAction.ERASE;
         } else if (CppIdentifier.isInsert(element)) {
           map.lastAction = LastAction.INSERT;
+        } else if (CppIdentifier.asArray(element)) {
+          map.asArray = true;
+        } else if (CppIdentifier.asTree(element)) {
+          map.asArray = false;
         } else {
           if (map.lastAction === LastAction.INSERT) {
             if (key === null) {
@@ -374,7 +378,7 @@ export class TextParser {
             key = null;
             value = null;
           }
-          // reset to set insert as default
+          // reset map to insert as default
           map.lastAction = LastAction.INSERT;
         }
       }

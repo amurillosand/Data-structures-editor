@@ -75,7 +75,7 @@ export class Node extends React.Component {
 
     const width = getWidthFromText(this.props.label);
     let drawCircle = true;
-    if (width > 100) {
+    if (width > 75) {
       drawCircle = false;
     }
 

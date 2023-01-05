@@ -1,4 +1,4 @@
-import Text from "../drawableComponents/Text";
+import Text from "../drawable-components/Text";
 import { DataStructuresIdentifier } from "../utils/DataStructuresIdentifier";
 import { BLOCK_HEIGHT, BLOCK_WITH_VERTICAL_SPACE, getWidthFromText, SPACE } from "../utils/Utils";
 
