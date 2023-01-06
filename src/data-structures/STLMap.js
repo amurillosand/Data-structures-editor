@@ -1,7 +1,7 @@
 import { RedBlackTree } from "../algorithms/red-black-tree/RedBlackTree";
 import { HORIZONTAL_DISTANCE, VERTICAL_DISTANCE } from "../utils/Utils";
 import EmptyDataStructure from "../drawable-components/EmptyDataStructure";
-import { BLOCK_HEIGHT, DEFAULT_NODE_COLOR, getHash, SPACE, toNumber } from "../utils/Utils";
+import { BLOCK_HEIGHT, DEFAULT_COLOR, getHash, SPACE, toNumber } from "../utils/Utils";
 import { Graph } from "./Graph";
 import { Vector } from "./Vector";
 
@@ -13,7 +13,7 @@ export const LastAction = {
 export class STLMap {
   constructor(top, name = "Map") {
     this.name = name;
-    this.currentColor = DEFAULT_NODE_COLOR;
+    this.currentColor = DEFAULT_COLOR;
 
     this.left = 0;
     this.top = top;

@@ -135,7 +135,7 @@ const setExample =
   "erase 100\n\n";
 
 const setAsArrayExample =
-  "set Set\n" +
+  "set Set como arreglo\n" +
   "asArray\n" +
   "insert 1\n" +
   "insert 1\n" +

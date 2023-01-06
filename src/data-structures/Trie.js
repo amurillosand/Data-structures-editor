@@ -1,8 +1,8 @@
-import { DEFAULT_NODE_COLOR } from "../utils/Utils";
+import { DEFAULT_COLOR } from "../utils/Utils";
 import { Graph } from "./Graph";
 
 class Node {
-  constructor(id, color = DEFAULT_NODE_COLOR) {
+  constructor(id, color = DEFAULT_COLOR) {
     this.id = id;
     this.isWord = false;
     this.color = color;

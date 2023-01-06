@@ -1,4 +1,4 @@
-import { DEFAULT_NODE_COLOR, BLACK } from "../utils/Utils";
+import { DEFAULT_COLOR, BLACK } from "../utils/Utils";
 import { getRandom } from "../utils/Utils";
 import { Loop, Edge } from "../drawable-components/Edge";
 import { Node } from "../drawable-components/Node";
@@ -7,7 +7,7 @@ import { prettify } from "../algorithms/Buchheim";
 export class Graph {
   constructor(top, directed = true, previousGraph = null) {
     this.top = top;
-    this.currentColor = DEFAULT_NODE_COLOR;
+    this.currentColor = DEFAULT_COLOR;
     this.nodes = new Map();
     this.edges = new Map();
     this.directed = directed;

@@ -1,4 +1,4 @@
-export const DEFAULT_NODE_COLOR = "#c9a9ff";
+export const DEFAULT_COLOR = "#c9a9ff";
 export const BLACK = "black";
 
 export const BLOCK_HEIGHT = 50;
@@ -147,7 +147,7 @@ export function toLowerCase(line) {
 
 export function getColor(color) {
   if (toLowerCase(color) === "reset") {
-    return DEFAULT_NODE_COLOR;
+    return DEFAULT_COLOR;
   }
   return color;
 }

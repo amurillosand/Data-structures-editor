@@ -1,4 +1,4 @@
-import { DEFAULT_NODE_COLOR, BLOCK_HEIGHT, SPACE, getWidthFromText } from "../utils/Utils";
+import { DEFAULT_COLOR, BLOCK_HEIGHT, SPACE, getWidthFromText } from "../utils/Utils";
 import Rectangle from "../drawable-components/Rectangle";
 import EmptyDataStructure from "../drawable-components/EmptyDataStructure";
 
@@ -9,7 +9,7 @@ export const Sides = {
 
 export class Vector {
   constructor(top, name = "Vector") {
-    this.currentColor = DEFAULT_NODE_COLOR;
+    this.currentColor = DEFAULT_COLOR;
     this.data = [];
     this.left = 0;
     this.top = top;

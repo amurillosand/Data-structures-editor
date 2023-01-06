@@ -1,10 +1,10 @@
 import EmptyDataStructure from "../drawable-components/EmptyDataStructure";
-import { DEFAULT_NODE_COLOR, BLOCK_WITH_VERTICAL_SPACE } from "../utils/Utils";
+import { DEFAULT_COLOR, BLOCK_WITH_VERTICAL_SPACE } from "../utils/Utils";
 import { Vector } from "./Vector";
 
 export class Matrix {
   constructor(top, name = "Matrix") {
-    this.currentColor = DEFAULT_NODE_COLOR;
+    this.currentColor = DEFAULT_COLOR;
     this.data = [];
     this.left = 0;
     this.top = top;

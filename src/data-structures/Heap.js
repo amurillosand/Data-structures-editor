@@ -1,4 +1,4 @@
-import { isSmaller, DEFAULT_NODE_COLOR, SPACE, BLOCK_HEIGHT, VERTICAL_DISTANCE } from "../utils/Utils";
+import { isSmaller, DEFAULT_COLOR, SPACE, BLOCK_HEIGHT, VERTICAL_DISTANCE } from "../utils/Utils";
 import { Graph } from "./Graph";
 import EmptyDataStructure from "../drawable-components/EmptyDataStructure";
 
@@ -10,7 +10,7 @@ export const HeapType = {
 export class Heap {
   constructor(top, name = "Priority Queue") {
     this.name = name;
-    this.currentColor = DEFAULT_NODE_COLOR;
+    this.currentColor = DEFAULT_COLOR;
     this.data = [null];
 
     this.left = 0;
