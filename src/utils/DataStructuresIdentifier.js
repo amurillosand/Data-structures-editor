@@ -1,47 +1,49 @@
+import {toLowerCase} from "./Utils";
+
 export class DataStructuresIdentifier {
   static isVector(line) {
-    return line.startsWith("array") || line.startsWith("vector");
+    return toLowerCase(line).startsWith("array") || toLowerCase(line).startsWith("vector");
   }
 
   static isMatrix(line) {
-    return line.startsWith("matrix");
+    return toLowerCase(line).startsWith("matrix");
   }
 
   static isStack(line) {
-    return line.startsWith("stack");
+    return toLowerCase(line).startsWith("stack");
   }
 
   static isQueue(line) {
-    return line.startsWith("queue");
+    return toLowerCase(line).startsWith("queue");
   }
 
   static isDeque(line) {
-    return line.startsWith("deque");
+    return toLowerCase(line).startsWith("deque");
   }
 
   static isHeap(line) {
-    return line.startsWith("priority_queue") || line.startsWith("heap");
+    return toLowerCase(line).startsWith("priority_queue") || toLowerCase(line).startsWith("heap");
   }
 
   static isSet(line) {
-    return line.startsWith("set");
+    return toLowerCase(line).startsWith("set");
   }
 
   static isMap(line) {
-    return line.startsWith("map");
+    return toLowerCase(line).startsWith("map");
   }
 
   static isGraph(line) {
-    return line.startsWith("graph");
+    return toLowerCase(line).startsWith("graph");
   }
 
   static isTrie(line) {
-    return line.startsWith("trie");
+    return toLowerCase(line).startsWith("trie");
   }
 
   // Returns if the line of text is an object known or not
   static isObject(line) {
-    line = line.toLowerCase();
+    line = toLowerCase(line).toLowerCase();
     return this.isVector(line) || this.isMatrix(line) ||
       this.isStack(line) || this.isQueue(line) ||
       this.isDeque(line) || this.isHeap(line) ||

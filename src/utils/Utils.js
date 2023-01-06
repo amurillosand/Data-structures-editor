@@ -22,6 +22,9 @@ export function isNumeric(num) {
 
 export function isColor(x) {
   x = x.toLowerCase();
+  if (x === "reset") {
+    return true;
+  }
   let s = new Option().style
   s.color = x
   let test1 = s.color === x
@@ -113,6 +116,9 @@ export function lightenColor(col, amt) {
 }
 
 export function getWidthFromText(text) {
+  if (isNumeric(text)) {
+    text = text.toString();
+  }
   return Math.max(BLOCK_HEIGHT, text.length * 12);
 }
 
@@ -133,4 +139,15 @@ export function isSmaller(a, b) {
       return a < b ? -1 : +1;
     }
   }
+}
+
+export function toLowerCase(line) {
+  return line.toLowerCase();
+}
+
+export function getColor(color) {
+  if (toLowerCase(color) === "reset") {
+    return DEFAULT_NODE_COLOR;
+  }
+  return color;
 }

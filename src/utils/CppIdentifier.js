@@ -1,53 +1,63 @@
+import {toLowerCase} from "./Utils";
+
 export class CppIdentifier {
   static isPush(line) {
-    return line === "push";
+    return toLowerCase(line) === "push";
   }
 
   static isPushBack(line) {
-    return line === "push_back";
+    return toLowerCase(line) === "push_back";
   }
 
   static isPushFront(line) {
-    return line === "push_front";
+    return toLowerCase(line) === "push_front";
   }
 
   static isPop(line) {
-    return line === "pop";
+    return toLowerCase(line) === "pop";
   }
 
   static isPopBack(line) {
-    return line === "pop_back";
+    return toLowerCase(line) === "pop_back";
   }
 
   static isPopFront(line) {
-    return line === "pop_front";
+    return toLowerCase(line) === "pop_front";
   }
 
   static isTop(line) {
-    return line === "top";
+    return toLowerCase(line) === "top";
+  }
+
+  static isSort(line) {
+    return toLowerCase(line) === "sort";
+  }
+
+  static isReverse(line) {
+    return toLowerCase(line) === "reverse";
   }
 
   static isMin(line) {
-    return line === "min";
+    return toLowerCase(line) === "min";
   }
 
   static isMax(line) {
-    return line === "max";
+    return toLowerCase(line) === "max";
   }
 
   static isInsert(line) {
-    return line === "insert";
+    return toLowerCase(line) === "insert";
   }
 
   static isErase(line) {
-    return line === "erase";
+    return toLowerCase(line) === "erase";
   }
 
   static asArray(line) {
-    return line === "asArray";
+    return toLowerCase(line) === "asarray";
   }
 
   static asTree(line) {
-    return line === "asTree";
+    return toLowerCase(line) === "astree";
   }
 }
