@@ -9,9 +9,11 @@ import { TEXT_SPACE } from './utils/Utils';
 
 const placeholderText =
   "[color]\nChanges all elements below with this color within the same data structure\n\n" +
-  "[command] Optional command, if not added that's the default behaviour or is an optional style \n\n" +
+  "[reset]\nReturns the default purple color\n\n" +
+  "[command]\nOptional command, if not added that's the default behaviour or is an optional style \n\n" +
   "-------\n\n" +
   "Array | Vector [name]\n" +
+  "[sort] [reverse]\n" +
   "[push_back] value [color]\n" +
   "pop_back\n\n\n" +
   "" +
@@ -29,6 +31,21 @@ const placeholderText =
   "push_front value [color]\n" +
   "pop_back\n" +
   "pop_front\n\n\n" +
+  "" +
+  "Priority_queue | Heap [name]\n" +
+  "[min] [max]\n" +
+  "[push] value [color]\n" +
+  "pop\n\n\n" +
+  "" +
+  "Set [name]\n" +
+  "[asArray] [asTree]\n" +
+  "[insert] value [color]\n" +
+  "erase value\n\n\n" +
+  "" +
+  "Map [name]\n" +
+  "[asArray] [asTree]\n" +
+  "[insert] key value [color]\n" +
+  "erase key\n\n\n" +
   "" +
   // "Graph\n" +
   // "u [color] (add node)\n" +
@@ -117,6 +134,18 @@ const setExample =
   "erase 5\n" +
   "erase 100\n\n";
 
+const setAsArrayExample =
+  "set Set\n" +
+  "asArray\n" +
+  "insert 1\n" +
+  "insert 1\n" +
+  "insert 5 purple\n" +
+  "3 6\n" +
+  "orange\n" +
+  "4 blue\n" +
+  "100 red\n" +
+  "200 500\n\n";
+
 const mapExample =
   "map Map\n" +
   "insert 1 2\n" +
@@ -128,7 +157,7 @@ const mapExample =
   "5 gato\n" +
   "6 conejo\n\n";
 
-const mapExample2 =
+const mapAsArrayExample =
   "map Map como arreglo\n" +
   "asArray\n" +
   "insert gato 1 blue\n" +
@@ -139,7 +168,7 @@ const mapExample2 =
   "tortuga 5\n" +
   "hamster 6\n\n";
 
-const example = arrayExample + matrixExample + stackExample + queueExample + dequeExample + heapExample + setExample + mapExample + mapExample2;
+const example = arrayExample + matrixExample + stackExample + queueExample + dequeExample + heapExample + setExample + setAsArrayExample + mapExample + mapAsArrayExample;
 
 export default function App() {
   const [text, setText] = useState(example);
@@ -153,24 +182,6 @@ export default function App() {
 
   return (
     <div class="global-div">
-      {/* <div>
-        <button>
-          {"Drawing a " + (this.state.drawGraph ? "graph" : "trie")}
-        </button>
-
-        <button>
-          {likeTree ? "ordered as a tree" : "randomly ordered"}
-        </button>
-
-        <button>
-          {directed ? "directed" : "un-directed"}
-        </button>
-
-        <button>
-          {"drag " + (drag ? "all" : "a single node")}
-        </button>
-      </div> */}
-
       <div class="image-wrapper">
         <textarea
           type="text"
