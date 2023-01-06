@@ -23,7 +23,6 @@ export class STLMap {
     this.tree = new RedBlackTree();
     // To make sure no key is duplicated
     this.nodeKeysSet = new Set();
-    this.totalNodesCount = 0;
     this.graph = null;
 
     this.lastElementKey = null;
@@ -58,14 +57,14 @@ export class STLMap {
       this.nodeKeysSet.add(key);
       this.tree.insert(key, {
         key: key,
-        value: value,
+        value: value.length ? value : key,
         color: color ?? this.currentColor,
       });
     } else {
       const prev = this.tree.find(key);
       this.tree.update(key, {
         ...prev,
-        value: value
+        value: value.length ? value : key,
       });
     }
     this.lastElementKey = key;

@@ -1,4 +1,4 @@
-import { isColor, divideByTokens, isSmaller } from "./Utils";
+import { isColor, divideByTokens, isSmaller, getColor } from "./Utils";
 import { VERTICAL_DISTANCE, BLOCK_HEIGHT } from "./Utils"
 
 import { Graph } from "../data-structures/Graph";
@@ -10,14 +10,13 @@ import { Queue } from "../data-structures/Queue";
 import { Deque } from "../data-structures/Deque";
 import { Heap, HeapType } from "../data-structures/Heap";
 import { STLSet } from "../data-structures/STLSet";
-import { STLMap } from "../data-structures/STLMap";
+import { STLMap, LastAction } from "../data-structures/STLMap";
 
 import { Indices } from "../data-structures/Indices";
 import { STLIndices } from "../data-structures/STLIndices";
 
 import { DataStructuresIdentifier } from "./DataStructuresIdentifier";
 import { CppIdentifier } from "./CppIdentifier";
-import { LastAction } from "../data-structures/STLMap";
 
 export class TextParser {
   constructor(text, oldParser = null) {
@@ -122,18 +121,18 @@ export class TextParser {
     let reverseArray = false;
     for (const line of lines) {
       if (line.length === 1 && isColor(line[0])) {
-        vector.currentColor = line[0];
+        vector.currentColor = getColor(line[0]);
         continue;
       }
 
       for (const element of line) {
-        if (element === "sort") {
+        if (CppIdentifier.isSort(element)) {
           sortArray = true;
-        } else if (element === "reverse") {
+        } else if (CppIdentifier.isReverse(element)) {
           reverseArray = !reverseArray;
         } else if (isColor(element)) {
           // update color of the last element if any
-          vector.updateLastElementColor(element);
+          vector.updateLastElementColor(getColor(element));
         } else if (CppIdentifier.isPushBack(element)) {
           // ignore this word :p
           continue;
@@ -161,7 +160,7 @@ export class TextParser {
 
     for (const line of lines) {
       if (line.length === 1 && isColor(line[0])) {
-        matrix.currentColor = line[0];
+        matrix.currentColor = getColor(line[0]);
         continue;
       }
 
@@ -169,7 +168,7 @@ export class TextParser {
       for (const element of line) {
         if (isColor(element)) {
           // update color of the last element if any
-          matrix.updateLastElementColor(element);
+          matrix.updateLastElementColor(getColor(element));
         } else {
           if (!newRowAdded) {
             matrix.addRow();
@@ -192,14 +191,14 @@ export class TextParser {
 
     for (const line of lines) {
       if (line.length === 1 && isColor(line[0])) {
-        queue.currentColor = line[0];
+        queue.currentColor = getColor(line[0]);
         continue;
       }
 
       for (const element of line) {
         if (isColor(element)) {
           // update color of the last element if any
-          queue.updateLastElementColor(element);
+          queue.updateLastElementColor(getColor(element));
         } else if (CppIdentifier.isPush(element)) {
           // ignore this word :p
           continue;
@@ -219,14 +218,14 @@ export class TextParser {
 
     for (const line of lines) {
       if (line.length === 1 && isColor(line[0])) {
-        stack.currentColor = line[0];
+        stack.currentColor = getColor(line[0]);
         continue;
       }
 
       for (const element of line) {
         if (isColor(element)) {
           // update color of the last element if any
-          stack.updateLastElementColor(element);
+          stack.updateLastElementColor(getColor(element));
         } else if (CppIdentifier.isPush(element)) {
           // ignore this word :p
           continue;
@@ -248,14 +247,14 @@ export class TextParser {
 
     for (const line of lines) {
       if (line.length === 1 && isColor(line[0])) {
-        deque.currentColor = line[0];
+        deque.currentColor = getColor(line[0]);
         continue;
       }
 
       for (const element of line) {
         if (isColor(element)) {
           // update color of the last element if any
-          deque.updateLastElementColor(element);
+          deque.updateLastElementColor(getColor(element));
         } else if (CppIdentifier.isPushBack(element)) {
           deque.side = Sides.BACK;
         } else if (CppIdentifier.isPushFront(element)) {
@@ -278,14 +277,14 @@ export class TextParser {
 
     for (const line of lines) {
       if (line.length === 1 && isColor(line[0])) {
-        heap.currentColor = line[0];
+        heap.currentColor = getColor(line[0]);
         continue;
       }
 
       for (const element of line) {
         if (isColor(element)) {
           // update color of the last element if any
-          heap.updateLastElementColor(element);
+          heap.updateLastElementColor(getColor(element));
         } else if (CppIdentifier.isPop(element)) {
           heap.pop();
         } else if (CppIdentifier.isPush(element)) {
@@ -311,19 +310,23 @@ export class TextParser {
 
     for (const line of lines) {
       if (line.length === 1 && isColor(line[0])) {
-        set.currentColor = line[0];
+        set.currentColor = getColor(line[0]);
         continue;
       }
 
       for (const element of line) {
         if (isColor(element)) {
           // update color of the last element if any
-          set.updateLastElementColor(element);
+          set.updateLastElementColor(getColor(element));
         } else if (CppIdentifier.isErase(element)) {
           set.lastAction = LastAction.ERASE;
         } else if (CppIdentifier.isInsert(element)) {
           set.lastAction = LastAction.INSERT;
-        } else {
+        } else if (CppIdentifier.asArray(element)) {
+          set.asArray = true;
+        } else if (CppIdentifier.asTree(element)) {
+          set.asArray = false;
+        }else {
           if (set.lastAction === LastAction.INSERT) {
             set.insert(element);
           } else {
@@ -345,7 +348,7 @@ export class TextParser {
 
     for (const line of lines) {
       if (line.length === 1 && isColor(line[0])) {
-        map.currentColor = line[0];
+        map.currentColor = getColor(line[0]);
         continue;
       }
 
@@ -354,7 +357,7 @@ export class TextParser {
       for (const element of line) {
         if (isColor(element)) {
           // update color of the last element if any
-          map.updateLastElementColor(element);
+          map.updateLastElementColor(getColor(element));
         } else if (CppIdentifier.isErase(element)) {
           map.lastAction = LastAction.ERASE;
         } else if (CppIdentifier.isInsert(element)) {

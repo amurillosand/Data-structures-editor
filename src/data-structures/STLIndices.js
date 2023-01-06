@@ -15,14 +15,14 @@ export class STLIndices {
     for (let index = 0; index < currentIndex; index++) {
       xSum += getWidthFromText(array[index]) + SPACE;
     }
-    let currentWidth = getWidthFromText(array[currentIndex]);
-    return xSum + currentWidth / 2;
+    return xSum;
   }
 
   drawAbove(index, array, text) {
+    let currentWidth = getWidthFromText(array[index]);
     return (
       <Text
-        x={this.getWidthSum(index, array) + this.dataStructure.left}
+        x={this.getWidthSum(index, array) + currentWidth / 2 + this.dataStructure.left}
         y={this.dataStructure.top - 5}
         text={text}
         fontSize={FONT_SIZE}
@@ -69,15 +69,32 @@ export class STLIndices {
         }
       } else if (DataStructuresIdentifier.isSet(this.type) ||
         DataStructuresIdentifier.isMap(this.type)) {
-        const beginNode = this.dataStructure.begin();
-        const rbeginNode = this.dataStructure.rbegin();
-
         if (this.dataStructure.asArray) {
           const array = this.dataStructure.data.map(element => element.value);
-          this.dataStructure.data.forEach((element, index) => {
-            objects.push(this.drawAbove(index, array, element.key));
-          });
+          if (DataStructuresIdentifier.isMap(this.type)) {
+            this.dataStructure.data.forEach((element, index) => {
+              objects.push(this.drawAbove(index, array, element.key));
+            });
+          }
+
+          if (this.dataStructure.size() === 1) {
+            objects.push(this.drawLeft(0, "begin/rbegin"));
+          } else {
+            objects.push(this.drawLeft(0, "begin"));
+            objects.push(
+              <Text
+                x={this.getWidthSum(array.length, array)}
+                y={this.dataStructure.top + BLOCK_HEIGHT / 2}
+                text="rbegin"
+                fontSize={FONT_SIZE}
+                textAnchor="start"
+              />
+            );
+          }
         } else {
+          const beginNode = this.dataStructure.begin();
+          const rbeginNode = this.dataStructure.rbegin();
+
           if (this.dataStructure.size() === 1) {
             objects = [
               <Text
